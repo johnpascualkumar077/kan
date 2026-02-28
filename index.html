@@ -307,6 +307,82 @@ body {
   color:var(--gold); margin-top:12px;
   opacity:0; transition:opacity .4s;
 }
+
+/* ── EXPAND PANEL ── */
+.expand-btn {
+  background:none; border:none;
+  color:var(--stone);
+  font-family:'EB Garamond',serif;
+  font-size:12px; letter-spacing:2px;
+  cursor:pointer; padding:8px 0;
+  transition:color .3s;
+}
+.expand-btn:hover { color:var(--gold); }
+.expand-panel {
+  max-height:0; overflow:hidden;
+  transition:max-height .4s ease;
+  width:100%; max-width:320px;
+}
+.expand-panel.open { max-height:600px; }
+
+/* ── TAGS ── */
+.tags { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.tag {
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--stone);
+  font-family:'Noto Serif JP',serif;
+  font-size:12px; font-weight:200;
+  padding:7px 14px;
+  border-radius:2px;
+  cursor:pointer;
+  transition:all .2s;
+}
+.tag.on {
+  border-color:var(--gold2);
+  color:var(--gold);
+  background:rgba(196,160,106,0.08);
+}
+
+/* ── WAVE CHART ── */
+.wave-wrap {
+  width:100%; max-width:320px;
+  margin-bottom:24px;
+}
+.wave-wrap svg { width:100%; height:auto; }
+
+/* ── RING CHART ── */
+.ring-wrap {
+  width:160px; height:160px;
+  margin:0 auto 24px;
+}
+.ring-wrap svg { width:100%; height:100%; }
+
+/* ── BAR CHART ── */
+.bar-row {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:8px; width:100%; max-width:280px;
+}
+.bar-label {
+  font-size:11px; font-weight:200;
+  color:var(--muted); width:80px;
+  text-align:right; flex-shrink:0;
+}
+.bar-track {
+  flex:1; height:6px;
+  background:var(--border); border-radius:3px;
+  overflow:hidden;
+}
+.bar-fill {
+  height:100%; background:var(--gold2);
+  border-radius:3px;
+  transition:width .6s ease;
+}
+.bar-count {
+  font-family:'EB Garamond',serif;
+  font-size:13px; color:var(--stone);
+  width:20px; flex-shrink:0;
+}
 </style>
 </head>
 <body>
@@ -393,6 +469,22 @@ const dayIdx=()=>{
 const dateFor=i=>{ const s=load(); if(!s.startDate) return ''; const d=new Date(s.startDate); d.setDate(d.getDate()+i); return d.toISOString().split('T')[0]; };
 let _reaction=0;
 let _noteExport='';
+// CBT x BUDDHIST DATA
+const POISONS = [
+  {id:'greed',k:'貪',label:'貪（欲）',pali:'Lobha'},
+  {id:'anger',k:'瞚',label:'瞚（怒）',pali:'Dosa'},
+  {id:'delusion',k:'癡',label:'癡（迷）',pali:'Moha'},
+];
+const DISTORTIONS = [
+  {id:'should',label:'べき思考'},
+  {id:'black_white',label:'白黒思考'},
+  {id:'overgener',label:'過度の一般化'},
+  {id:'mind_read',label:'読心術'},
+  {id:'catastrophe',label:'破局化'},
+];
+let _poison = null;
+let _distortions = [];
+
 
 // ═══════════════════════════════════
 // SVG MANDALA
@@ -493,9 +585,29 @@ function rToday(){
           ${[1,2,3,4,5].map(i=>`<div class="dot" onclick="setR(${i})"></div>`).join('')}
         </div>
       </div>
-      <button class="btn a4" onclick="submitE()">記録して眠る</button>
+      <div style="text-align:center;margin:8px 0 20px" class="a4">
+        <button class="expand-btn" onclick="toggleDeep()">▼ もう少し深く観る</button>
+      </div>
+      <div class="expand-panel a4" id="deep-panel">
+        <div style="padding:0 0 24px;display:flex;flex-direction:column;align-items:center;gap:20px">
+          <div style="text-align:center">
+            <div class="label" style="margin-bottom:12px">三毒 · TRIGUNA</div>
+            <div class="tags" id="poison-tags">
+              ${POISONS.map(p=>\`<div class="tag" onclick="setPoison('\${p.id}')">\${p.k}<br><span style="font-size:10px;color:var(--stone)">\${p.pali}</span></div>\`).join('')}
+            </div>
+          </div>
+          <div style="text-align:center">
+            <div class="label" style="margin-bottom:12px">認知の歪み</div>
+            <div class="tags" id="dist-tags">
+              ${DISTORTIONS.map(d2=>\`<div class="tag" onclick="toggleDist('\${d2.id}')">\${d2.label}</div>\`).join('')}
+            </div>
+          </div>
+          <textarea class="ta" id="reframe-ta" placeholder="捉え直し（仏教的視点で一言）" rows="2" style="min-height:48px"></textarea>
+        </div>
+      </div>
+      <button class="btn a5" onclick="submitE()">記録して眠る</button>
     </div>`;
-    _reaction=0;
+    _reaction=0; _poison=null; _distortions=[];
     return;
   }
 
@@ -567,6 +679,87 @@ function rCal(){
 // ═══════════════════════════════════
 // RENDER INSIGHT
 // ═══════════════════════════════════
+function waveChart(allEntries,s){
+  const W=300,H=100,pad=20;
+  const pts=[];
+  for(let i=0;i<30;i++){
+    const date=dateFor(i);
+    const e=s.entries&&s.entries[date];
+    if(e&&e.evening_done&&e.reaction){
+      const x=pad+i*(W-2*pad)/29;
+      const y=H-pad-(e.reaction-1)*(H-2*pad)/4;
+      pts.push({x,y,r:e.reaction});
+    }
+  }
+  if(pts.length<2) return '';
+  let path=`M${pts[0].x},${pts[0].y}`;
+  for(let i=1;i<pts.length;i++){
+    const cp=(pts[i].x-pts[i-1].x)/3;
+    path+=` C${pts[i-1].x+cp},${pts[i-1].y} ${pts[i].x-cp},${pts[i].y} ${pts[i].x},${pts[i].y}`;
+  }
+  const areaPath=path+` L${pts[pts.length-1].x},${H-pad} L${pts[0].x},${H-pad} Z`;
+  let yLabels='';
+  for(let v=1;v<=5;v++){
+    const y2=H-pad-(v-1)*(H-2*pad)/4;
+    yLabels+=`<text x="${pad-8}" y="${y2+3}" text-anchor="end" font-family="'EB Garamond',serif" font-size="9" fill="#524F44">${v}</text>`;
+    yLabels+=`<line x1="${pad}" y1="${y2}" x2="${W-pad}" y2="${y2}" stroke="#201E18" stroke-width="0.5"/>`;
+  }
+  const dots2=pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3" fill="#C4A06A"/>`).join('');
+  return `<div class="wave-wrap"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C4A06A" stop-opacity="0.2"/><stop offset="100%" stop-color="#C4A06A" stop-opacity="0"/></linearGradient></defs>
+    ${yLabels}
+    <path d="${areaPath}" fill="url(#wg)"/>
+    <path d="${path}" fill="none" stroke="#C4A06A" stroke-width="1.5"/>
+    ${dots2}
+  </svg></div>`;
+}
+
+function ringChart(entries){
+  const counts={greed:0,anger:0,delusion:0,none:0};
+  entries.forEach(([,v])=>{
+    if(v.poison&&counts.hasOwnProperty(v.poison)) counts[v.poison]++;
+    else counts.none++;
+  });
+  const total=entries.length||1;
+  const colors={greed:'#C4A06A',anger:'#8A6040',delusion:'#524F44',none:'#201E18'};
+  const labels={greed:'貪',anger:'瞋',delusion:'癡',none:'空'};
+  const cx=80,cy=80,R=65,r2=45;
+  let arcs='',angle=-Math.PI/2;
+  const sorted=Object.entries(counts).filter(([,c])=>c>0).sort((a,b)=>b[1]-a[1]);
+  if(!sorted.length) return '';
+  const dominant=sorted[0];
+  sorted.forEach(([key,count])=>{
+    const sweep=(count/total)*2*Math.PI;
+    if(sweep<0.01) return;
+    const x1=cx+R*Math.cos(angle),y1=cy+R*Math.sin(angle);
+    const x2=cx+R*Math.cos(angle+sweep),y2=cy+R*Math.sin(angle+sweep);
+    const ix1=cx+r2*Math.cos(angle+sweep),iy1=cy+r2*Math.sin(angle+sweep);
+    const ix2=cx+r2*Math.cos(angle),iy2=cy+r2*Math.sin(angle);
+    const large=sweep>Math.PI?1:0;
+    arcs+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${R},${R} 0 ${large} 1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix1.toFixed(1)},${iy1.toFixed(1)} A${r2},${r2} 0 ${large} 0 ${ix2.toFixed(1)},${iy2.toFixed(1)} Z" fill="${colors[key]}" opacity="0.85"/>`;
+    angle+=sweep;
+  });
+  return `<div class="ring-wrap"><svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+    ${arcs}
+    <text x="80" y="88" text-anchor="middle" font-family="'Noto Serif JP',serif" font-weight="200" font-size="28" fill="${colors[dominant[0]]}">${labels[dominant[0]]}</text>
+  </svg></div>`;
+}
+
+function barChart(entries){
+  const counts={};
+  DISTORTIONS.forEach(d3=>counts[d3.id]=0);
+  entries.forEach(([,v])=>{
+    if(v.distortions) v.distortions.forEach(id=>{if(counts.hasOwnProperty(id))counts[id]++;});
+  });
+  const mx=Math.max(...Object.values(counts),1);
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  return sorted.map(([id,count])=>{
+    const dd=DISTORTIONS.find(x=>x.id===id);
+    const pct=Math.round(count/mx*100);
+    return `<div class="bar-row"><div class="bar-label">${dd?dd.label:id}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><div class="bar-count">${count}</div></div>`;
+  }).join('');
+}
+
 function rInsight(){
   const s=load(), el=document.getElementById('insight');
   if(!s.startDate||!s.entries){
@@ -584,24 +777,34 @@ function rInsight(){
 
   _noteExport=`## 今週のSNS心理学解剖\n\n今週は${entries.length}件の観察を記録した。\n\n現在のテーマは「**${d.p}**」。${d.c}を軸に、日常とSNSの中に現れる認知の動きを観察している。\n${notes.length?'\n---\n\n記録した気づき：\n'+notes.map(([,v])=>`- 「${v.note}」`).join('\n')+'\n\n---\n\n':''}観察を続けると、感情の動きに一瞬の間が生まれる。その間に、選択がある。\n\n#SNS心理学 #認知バイアス #観察日記 #原始仏教`;
 
+  const wave=waveChart(entries,s);
+  const ring=ringChart(entries);
+  const hasDistortions=entries.some(([,v])=>v.distortions&&v.distortions.length);
+  const hasPoisonData=entries.some(([,v])=>v.poison);
+  const bars=hasDistortions?barChart(entries):'';
+
   el.innerHTML=`
   <div style="text-align:center;max-width:320px;padding-bottom:40px">
-    <div class="a1 label" style="margin-bottom:8px">週次洞察</div>
+    <div class="a1 label" style="margin-bottom:8px">洞察</div>
     <div class="a2 italic-muted" style="margin-bottom:32px">${d.p} の段階</div>
     <div class="iblock a2">
       <div class="il">平均反応強度</div>
       <div class="iv">${avg}<span style="font-size:18px;color:var(--stone)"> / 5</span></div>
     </div>
+    ${wave?`<div class="a2"><div class="label" style="margin-bottom:12px">反応の波</div>${wave}</div>`:''}
+    ${hasPoisonData?`<div class="sep"></div><div class="a3"><div class="label" style="margin-bottom:16px">三毒の分布</div>${ring}</div>`:''}
+    ${hasDistortions?`<div class="sep"></div><div class="a3" style="display:flex;flex-direction:column;align-items:center"><div class="label" style="margin-bottom:16px">認知の歪み</div>${bars}</div>`:''}
     ${notes.length?`
+    <div class="sep"></div>
     <div style="width:100%;max-width:320px;margin-bottom:24px">
-      <div class="a3 label" style="margin-bottom:16px;text-align:center">最近の気づき</div>
+      <div class="a4 label" style="margin-bottom:16px;text-align:center">最近の気づき</div>
       ${notes.map(([date,v])=>`
-      <div class="ne a3">
+      <div class="ne a4">
         <div class="nt">「${v.note}」</div>
         <div class="nd">${date}</div>
       </div>`).join('')}
     </div>`:''}
-    <button class="btn a4" onclick="copyNote()" style="font-size:13px;padding:14px">note下書きをコピー</button>
+    <button class="btn a5" onclick="copyNote()" style="font-size:13px;padding:14px">note下書きをコピー</button>
     <div id="cc"></div>
   </div>`;
 }
@@ -629,11 +832,37 @@ function setR(v){
   document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i<v));
 }
 
+function toggleDeep(){
+  const p=document.getElementById('deep-panel');
+  if(p) p.classList.toggle('open');
+}
+
+function setPoison(id){
+  _poison=(_poison===id)?null:id;
+  const tags=document.querySelectorAll('#poison-tags .tag');
+  tags.forEach((t,i)=>t.classList.toggle('on',POISONS[i].id===id&&_poison===id));
+}
+
+function toggleDist(id){
+  const idx=_distortions.indexOf(id);
+  if(idx>=0) _distortions.splice(idx,1);
+  else if(_distortions.length<2) _distortions.push(id);
+  const tags=document.querySelectorAll('#dist-tags .tag');
+  tags.forEach((t,i)=>t.classList.toggle('on',_distortions.includes(DISTORTIONS[i].id)));
+}
+
 function submitE(){
   const s=load(), t=today();
   const note=(document.getElementById('ta')||{}).value||'';
+  const reframe=(document.getElementById('reframe-ta')||{}).value||'';
   if(!s.entries) s.entries={};
-  s.entries[t]={...s.entries[t]||{}, evening_done:true, reaction:_reaction, note:note.trim(), ts:Date.now()};
+  s.entries[t]={
+    ...s.entries[t]||{},
+    evening_done:true, reaction:_reaction, note:note.trim(), ts:Date.now(),
+    poison:_poison||null,
+    distortions:_distortions.length?[..._distortions]:[],
+    reframe:reframe.trim()||null
+  };
   save(s); rToday();
 }
 
