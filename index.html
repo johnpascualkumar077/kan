@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>観</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0C0B08;
+  --surface: #141210;
+  --border:  #201E18;
+  --stone:   #524F44;
+  --muted:   #8A8474;
+  --text:    #D4CFBF;
+  --bright:  #EDE8DC;
+  --gold:    #C4A06A;
+  --glow:    rgba(196,160,106,0.12);
+  --gold2:   #7A6240;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { height:100%; }
+body {
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Noto Serif JP',serif;
+  font-weight:300;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+
+/* ── SCREENS ── */
+.scr {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.5s ease;
+}
+.scr.on { opacity:1; pointer-events:all; }
+
+/* ── SCROLL AREA ── */
+.area {
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:48px 28px 24px;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* ── NAV ── */
+.nav {
+  flex-shrink:0;
+  display:flex;
+  justify-content:center;
+  border-top:1px solid var(--border);
+  background:var(--bg);
+  padding-bottom:env(safe-area-inset-bottom, 0);
+}
+.nb {
+  flex:1; max-width:110px;
+  padding:14px 8px 16px;
+  background:none; border:none;
+  color:var(--stone);
+  font-family:'Noto Serif JP',serif;
+  font-size:20px;
+  cursor:pointer;
+  display:flex; flex-direction:column;
+  align-items:center; gap:4px;
+  transition:color 0.3s;
+}
+.nb span {
+  font-family:'EB Garamond',serif;
+  font-size:9px; letter-spacing:2px;
+  text-transform:uppercase;
+}
+.nb.on { color:var(--gold); }
+
+/* ── MANDALA ── */
+.mandala-wrap {
+  width:220px; height:220px;
+  margin-bottom:36px;
+  flex-shrink:0;
+}
+.mandala-wrap svg { width:100%; height:100%; }
+@keyframes pulse-dot {
+  0%,100%{ r:8; opacity:.9; }
+  50%{ r:10; opacity:1; }
+}
+.today-pulse { animation: pulse-dot 2s ease-in-out infinite; }
+
+/* ── ANIMATIONS ── */
+@keyframes arise {
+  from{ opacity:0; transform:translateY(14px); }
+  to  { opacity:1; transform:translateY(0); }
+}
+.a1{ animation:arise .7s .0s ease both; }
+.a2{ animation:arise .7s .12s ease both; }
+.a3{ animation:arise .7s .24s ease both; }
+.a4{ animation:arise .7s .36s ease both; }
+.a5{ animation:arise .7s .48s ease both; }
+
+@keyframes breathe {
+  0%,100%{ transform:scale(1); opacity:.75; }
+  50%    { transform:scale(1.04); opacity:1; }
+}
+.breathe{ animation:breathe 4s ease-in-out infinite; }
+
+/* ── TYPOGRAPHY ── */
+.label {
+  font-family:'EB Garamond',serif;
+  font-size:11px; letter-spacing:4px;
+  text-transform:uppercase;
+  color:var(--stone);
+}
+.italic-muted {
+  font-family:'EB Garamond',serif;
+  font-style:italic; font-size:14px;
+  color:var(--stone); text-align:center;
+}
+
+/* ── CARD ── */
+.card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:24px 24px;
+  width:100%; max-width:340px;
+  margin-bottom:24px;
+}
+.card .cl {
+  font-family:'EB Garamond',serif;
+  font-size:11px; letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--stone);
+  display:block; margin-bottom:12px;
+}
+.card .ct {
+  font-size:15px; font-weight:300;
+  color:var(--bright); line-height:2;
+}
+.card .cs {
+  font-size:13px; font-weight:200;
+  color:var(--muted); line-height:2;
+  margin-top:14px; padding-top:14px;
+  border-top:1px solid var(--border);
+}
+
+/* ── BUTTON ── */
+.btn {
+  background:none;
+  border:1px solid var(--gold2);
+  color:var(--gold);
+  font-family:'Noto Serif JP',serif;
+  font-weight:300; font-size:14px;
+  padding:15px 48px;
+  border-radius:2px;
+  cursor:pointer; letter-spacing:2px;
+  transition:all .25s ease;
+  width:100%; max-width:280px;
+}
+.btn:hover,.btn:active {
+  background:var(--gold2);
+  border-color:var(--gold);
+  color:var(--bright);
+}
+
+/* ── DOTS ── */
+.dots { display:flex; gap:12px; }
+.dot {
+  width:13px; height:13px;
+  border-radius:50%;
+  border:1px solid var(--stone);
+  cursor:pointer;
+  transition:all .2s;
+  background:transparent;
+}
+.dot.on {
+  background:var(--gold);
+  border-color:var(--gold);
+  box-shadow:0 0 10px var(--glow);
+}
+
+/* ── TEXTAREA ── */
+.ta {
+  background:transparent;
+  border:none; border-bottom:1px solid var(--border);
+  color:var(--text);
+  font-family:'Noto Serif JP',serif;
+  font-weight:200; font-size:15px;
+  padding:14px 0; width:100%;
+  max-width:320px; resize:none;
+  outline:none; line-height:2;
+  text-align:center; min-height:72px;
+}
+.ta::placeholder{ color:var(--stone); }
+
+/* ── CALENDAR GRID ── */
+.cg {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:7px;
+  width:100%; max-width:320px;
+  margin:24px 0;
+}
+.cd {
+  aspect-ratio:1;
+  border-radius:50%;
+  border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'EB Garamond',serif; font-size:12px;
+  color:var(--stone); transition:all .3s;
+}
+.cd.done { background:var(--gold2); border-color:var(--gold2); color:var(--gold); }
+.cd.today { border-color:var(--gold); color:var(--bright); }
+.cd.done.today { background:var(--gold); border-color:var(--gold); color:var(--bg); }
+
+/* ── STATS ── */
+.stats { display:flex; gap:36px; margin-bottom:32px; }
+.stat { text-align:center; }
+.sn {
+  font-family:'EB Garamond',serif;
+  font-size:38px; color:var(--gold); line-height:1;
+}
+.sl {
+  font-family:'EB Garamond',serif;
+  font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--stone);
+  margin-top:6px;
+}
+
+/* ── PHASE BADGE ── */
+.phase {
+  font-family:'EB Garamond',serif;
+  font-size:10px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--gold2);
+  border:1px solid var(--border);
+  padding:4px 14px; margin-bottom:20px;
+}
+
+/* ── SEP LINE ── */
+.sep { width:1px; height:32px; background:var(--border); margin:16px auto; }
+
+/* ── COMPLETE BIG KANJI ── */
+.ck {
+  font-size:96px; font-weight:200;
+  color:var(--gold); line-height:1;
+  text-align:center;
+}
+.cm {
+  font-size:15px; font-weight:200;
+  color:var(--muted); line-height:2.4;
+  text-align:center; max-width:270px;
+  margin-top:28px;
+}
+
+/* ── INSIGHT BLOCK ── */
+.iblock {
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:22px 24px;
+  width:100%; max-width:320px;
+  margin-bottom:20px;
+  text-align:center;
+}
+.iblock .il {
+  font-family:'EB Garamond',serif;
+  font-size:11px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--stone);
+  margin-bottom:12px;
+}
+.iblock .iv {
+  font-family:'EB Garamond',serif;
+  font-size:44px; color:var(--gold); line-height:1;
+}
+
+/* ── NOTE ENTRY ── */
+.ne {
+  border-bottom:1px solid var(--border);
+  padding:14px 0; text-align:left;
+  width:100%; max-width:320px;
+}
+.ne .nt {
+  font-size:13px; font-weight:200;
+  color:var(--muted); line-height:1.9;
+}
+.ne .nd {
+  font-family:'EB Garamond',serif;
+  font-size:11px; color:var(--stone);
+  margin-top:4px;
+}
+
+/* ── COPY CONFIRM ── */
+#cc {
+  font-family:'EB Garamond',serif;
+  font-size:12px; letter-spacing:2px;
+  color:var(--gold); margin-top:12px;
+  opacity:0; transition:opacity .4s;
+}
+</style>
+</head>
+<body>
+
+<!-- TODAY -->
+<div class="scr on" id="s-today">
+  <div class="area" id="today"></div>
+  <nav class="nav">
+    <button class="nb on" onclick="go('today')">観<span>Today</span></button>
+    <button class="nb"    onclick="go('cal')">波<span>Record</span></button>
+    <button class="nb"    onclick="go('insight')">識<span>Insight</span></button>
+  </nav>
+</div>
+
+<!-- CALENDAR -->
+<div class="scr" id="s-cal">
+  <div class="area" id="cal"></div>
+  <nav class="nav">
+    <button class="nb"    onclick="go('today')">観<span>Today</span></button>
+    <button class="nb on" onclick="go('cal')">波<span>Record</span></button>
+    <button class="nb"    onclick="go('insight')">識<span>Insight</span></button>
+  </nav>
+</div>
+
+<!-- INSIGHT -->
+<div class="scr" id="s-insight">
+  <div class="area" id="insight"></div>
+  <nav class="nav">
+    <button class="nb"    onclick="go('today')">観<span>Today</span></button>
+    <button class="nb"    onclick="go('cal')">波<span>Record</span></button>
+    <button class="nb on" onclick="go('insight')">識<span>Insight</span></button>
+  </nav>
+</div>
+
+<script>
+// ═══════════════════════════════════
+// 30 DAYS OF PRACTICE
+// ═══════════════════════════════════
+const D=[
+  {k:'観',p:'外を観る',   m:'SNSで最初に感情が動いた投稿を一つ記憶する',              s:'その投稿を見たとき、胸・腹・喉のどこかが反応したか気づく',  c:'正念 · Sati'},
+  {k:'感',p:'内を感じる', m:'今日、自分が「つい」やってしまったことを一つ観察する',    s:'それをやる前に一瞬の衝動があったかに気づく',               c:'無明 · Avijjā'},
+  {k:'空',p:'空を感じる', m:'当たり前だと思っている何かを意識的に見る',               s:'それがなかったらどうか、一秒だけ想像する',                 c:'空 · Śūnyatā'},
+  {k:'無',p:'手放す',     m:'「こうあるべき」と思った瞬間を記録する',                  s:'その「べき」を声に出さずに手放す練習をする',               c:'無執着 · Aparigraha'},
+  {k:'流',p:'流れを見る', m:'バズっているコンテンツがなぜ広まったか一つ考える',        s:'感情 → 拡散 の連鎖を頭の中でトレースする',                c:'縁起 · Pratītyasamutpāda'},
+  {k:'息',p:'呼吸に戻る', m:'今日、3回だけ「深呼吸のきっかけ」を意識的に作る',        s:'画面を開く前に一息。それだけ。',                          c:'入出息念 · Ānāpānasati'},
+  {k:'苦',p:'苦を知る',   m:'小さな「嫌だ」を見逃さない。感情の数を数える',           s:'嫌だと思ったとき、逃げる前に2秒だけ留まる',               c:'苦 · Dukkha'},
+  {k:'慈',p:'慈しむ',     m:'誰か一人の立場から世界を見る瞬間を作る',                 s:'その人はなぜそう考えるのか。批判なしに想像する',            c:'慈悲 · Karuṇā'},
+  {k:'今',p:'今に在る',   m:'食事中にスマホを一度置く。それだけでいい',               s:'口の中の味に30秒だけ全注意を向ける',                      c:'刹那 · Kṣaṇa'},
+  {k:'見',p:'偏りを見る', m:'自分の意見と反対側の意見を一つ探して読む',               s:'反発を感じても、最後まで読む',                             c:'確証バイアス · Confirmation'},
+  {k:'常',p:'無常を感じる',m:'変化した何かに気づく。天気でも気分でも関係でも',         s:'それを変えようとするのをやめ、ただ確認する',               c:'無常 · Anicca'},
+  {k:'執',p:'執着を観る', m:'何かに執着しているとき「これは一時的だ」と言う',          s:'好きなコンテンツを途中でやめる練習を一回する',             c:'渇愛 · Taṇhā'},
+  {k:'語',p:'言葉を観る', m:'「みんな」「絶対」「最悪」を使った投稿を観察する',        s:'その言葉が感情をどう増幅しているか考える',                 c:'正語 · Sammā Vācā'},
+  {k:'身',p:'身体に戻る', m:'姿勢が悪くなった瞬間を一度だけ気づく',                   s:'気づいた瞬間、ゆっくり背筋を伸ばす。それだけ',             c:'身念処 · Kāyānupassanā'},
+  {k:'間',p:'間を作る',   m:'返信を10分だけ意図的に遅らせる一回を作る',               s:'衝動的な反応と考えた反応の違いに気づく',                   c:'正定 · Sammā Samādhi'},
+  {k:'比',p:'比較を観る', m:'「あの人は〇〇だ」と思った瞬間を記録する',               s:'その比較が自分にとって何の役に立つか問う',                 c:'無我 · Anattā'},
+  {k:'恐',p:'恐れを観る', m:'今日、避けていることを一つ特定する',                     s:'避けている理由が恐れなら、その恐れを一言書く',             c:'五蓋 · Pañca Nīvaraṇa'},
+  {k:'望',p:'欲望を観る', m:'「欲しい」と思ったものをリストアップする',               s:'そのうち本当に必要なものはいくつか考える',                 c:'少欲知足 · Santuṭṭhi'},
+  {k:'集',p:'集中する',   m:'一つの作業を30分だけ通知ゼロでやる',                     s:'途中で別のことを考えたら気づき、戻る。それだけ',           c:'正精進 · Sammā Vāyāma'},
+  {k:'初',p:'初心に戻る', m:'よく知っているものを初めて見るように眺める',             s:'「これは何だろう」と子供のように問う',                     c:'初心 · Shoshin'},
+  {k:'連',p:'連鎖を観る', m:'自分の感情がどこから来たか遡って考える',                 s:'感情 → きっかけ → その前は？と3ステップ遡る',            c:'縁起 · Chain of Cause'},
+  {k:'静',p:'静寂を作る', m:'3分だけ何も見ない・聞かない時間を作る',                  s:'不快でもいい。ただ、沈黙の中にいる',                       c:'止 · Samatha'},
+  {k:'受',p:'受け入れる', m:'コントロールできないことに一回気づく',                   s:'「これは私にはどうにもならない」と声に出す',               c:'平静 · Upekkha'},
+  {k:'選',p:'選択を観る', m:'「何となく」やったことを一つ特定する',                   s:'それは本当に選んだか、惰性だったか考える',                 c:'正思惟 · Sammā Saṅkappa'},
+  {k:'足',p:'在ることに気づく',m:'機能していて気づかない何かを意識する',              s:'それがない世界を20秒だけ想像する',                         c:'知足 · Santuṭṭhi'},
+  {k:'抵',p:'抵抗を観る', m:'「やりたくない」と感じた瞬間を観察する',                 s:'その感覚を批判せず「抵抗がある」と名前をつける',            c:'正見 · Sammā Diṭṭhi'},
+  {k:'言',p:'内語を観る', m:'自分への批判的な内語が出たら気づく',                     s:'「また出た」とユーモアをもって観察する',                   c:'慈 · Mettā'},
+  {k:'終',p:'終わりを感じる',m:'この一日が最後だったら何を大切にするか考える',        s:'その答えを今日の小さな行動に一つ反映する',                 c:'死念 · Maraṇasati'},
+  {k:'中',p:'中道を歩む', m:'極端な判断（最高/最悪）を一回留保する',                  s:'「どちらでもある」と言える何かを探す',                     c:'中道 · Majjhimā Paṭipadā'},
+  {k:'帰',p:'始まりに戻る',m:'今日、何も特別なことをしなくていい。ただ在る',          s:'起きて、息をして、それだけでいいと一回思う',               c:'涅槃 · Nirvāṇa'},
+];
+
+// ═══════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════
+const SK='kan_v1';
+const load=()=>{ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch{ return{}; } };
+const save=s=>localStorage.setItem(SK,JSON.stringify(s));
+const today=()=>new Date().toISOString().split('T')[0];
+const dayIdx=()=>{
+  const s=load(); if(!s.startDate) return 0;
+  const diff=Math.floor((new Date(today())-new Date(s.startDate))/86400000);
+  return Math.min(diff,D.length-1);
+};
+const dateFor=i=>{ const s=load(); if(!s.startDate) return ''; const d=new Date(s.startDate); d.setDate(d.getDate()+i); return d.toISOString().split('T')[0]; };
+let _reaction=0;
+let _noteExport='';
+
+// ═══════════════════════════════════
+// SVG MANDALA
+// ═══════════════════════════════════
+function mandala(di,entries){
+  const cx=110,cy=110,R=92,ri=40;
+  let dots='';
+  for(let i=0;i<30;i++){
+    const a=(i/30)*2*Math.PI-Math.PI/2;
+    const x=cx+R*Math.cos(a), y=cy+R*Math.sin(a);
+    const date=dateFor(i);
+    const done=entries&&entries[date]&&entries[date].evening_done;
+    const isT=i===di;
+    if(done){
+      dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#7A6240" stroke="#C4A06A" stroke-width="1"/>`;
+    } else if(isT){
+      dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#0C0B08" stroke="#C4A06A" stroke-width="1.5" class="today-pulse"/>`;
+    } else {
+      dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#161410" stroke="#201E18" stroke-width="1"/>`;
+    }
+  }
+  // inner week ring
+  const ws=Math.floor(di/7)*7;
+  for(let i=0;i<7;i++){
+    const idx=ws+i;
+    const a=(i/7)*2*Math.PI-Math.PI/2;
+    const x=cx+ri*Math.cos(a), y=cy+ri*Math.sin(a);
+    const date=dateFor(idx);
+    const done=entries&&entries[date]&&entries[date].evening_done;
+    const isT=idx===di;
+    const fill=done?'#C4A06A':isT?'#201E18':'#141210';
+    const stroke=done?'#C4A06A':isT?'#C4A06A':'#201E18';
+    dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${fill}" stroke="${stroke}" stroke-width="1"/>`;
+  }
+  const d=D[di%D.length];
+  return `<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="110" cy="110" r="100" fill="none" stroke="#161410" stroke-width="1"/>
+    <circle cx="110" cy="110" r="52" fill="none" stroke="#161410" stroke-width="1"/>
+    ${dots}
+    <text x="110" y="120" text-anchor="middle" font-family="'Noto Serif JP',serif" font-weight="200" font-size="44" fill="#EDE8DC">${d.k}</text>
+  </svg>`;
+}
+
+// ═══════════════════════════════════
+// RENDER TODAY
+// ═══════════════════════════════════
+function rToday(){
+  const s=load(), t=today(), di=dayIdx(), d=D[di%D.length];
+  const entry=s.entries&&s.entries[t]||{};
+  const hr=new Date().getHours();
+  const el=document.getElementById('today');
+
+  // ── First launch ──
+  if(!s.startDate){
+    el.innerHTML=`
+    <div style="text-align:center;padding:20px 0 40px">
+      <div class="a1 breathe" style="font-size:104px;font-weight:200;color:var(--gold);line-height:1;margin-bottom:16px">観</div>
+      <div class="a2 label" style="margin-bottom:48px">KAN — DAILY PRACTICE</div>
+      <div class="a3" style="font-size:14px;font-weight:200;color:var(--muted);line-height:2.6;max-width:280px;margin:0 auto 48px">
+        30日間のプログラム。<br>
+        毎日2分だけ。<br>
+        やがて、世界の見え方が変わる。
+      </div>
+      <button class="btn a4" onclick="start()">はじめる</button>
+    </div>`;
+    return;
+  }
+
+  // ── Evening done ──
+  if(entry.evening_done){
+    el.innerHTML=`
+    <div style="text-align:center;padding:20px 0 40px">
+      <div class="a1 breathe ck">${d.k}</div>
+      <div class="a2 cm">
+        今日の観察、完了。<br>
+        ${entry.note?`<br>「${entry.note}」<br>`:''}
+        <br>明日また、ここに来る。
+      </div>
+      <div class="a3" style="margin-top:40px">${mandala(di,s.entries)}</div>
+    </div>`;
+    return;
+  }
+
+  // ── Morning done, afternoon / evening ──
+  if(entry.morning_done&&hr>=16){
+    el.innerHTML=`
+    <div style="text-align:center;max-width:340px;padding:0 0 32px">
+      <div class="a1 label" style="margin-bottom:16px">夕の記録</div>
+      <div class="a2 italic-muted" style="margin-bottom:32px">今日の観察、どうだったか</div>
+      <div class="card a2" style="text-align:left">
+        <span class="cl">今日の問い</span>
+        <div class="ct" style="font-size:13px;color:var(--muted)">${d.m}</div>
+      </div>
+      <textarea class="ta a3" id="ta" placeholder="気づいたことを一言（任意）" rows="3"></textarea>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px;margin:28px 0" class="a3">
+        <div class="label">自分の反応の強さ</div>
+        <div class="dots" id="rdots">
+          ${[1,2,3,4,5].map(i=>`<div class="dot" onclick="setR(${i})"></div>`).join('')}
+        </div>
+      </div>
+      <button class="btn a4" onclick="submitE()">記録して眠る</button>
+    </div>`;
+    _reaction=0;
+    return;
+  }
+
+  // ── Morning done, too early for evening ──
+  if(entry.morning_done){
+    el.innerHTML=`
+    <div style="text-align:center;padding:0 0 32px">
+      <div class="a1" style="margin-bottom:32px">${mandala(di,s.entries)}</div>
+      <div class="a2 phase">${d.p}</div>
+      <div class="a2 label" style="margin-bottom:20px">Day ${di+1} · ${d.c}</div>
+      <div class="card a3" style="text-align:left">
+        <span class="cl">今日の問い</span>
+        <div class="ct">${d.m}</div>
+        <div class="cs">${d.s}</div>
+      </div>
+      <div class="a4 italic-muted">16時以降に記録できます</div>
+    </div>`;
+    return;
+  }
+
+  // ── Morning not done ──
+  el.innerHTML=`
+  <div style="text-align:center;padding:0 0 32px">
+    <div class="a1" style="margin-bottom:32px">${mandala(di,s.entries)}</div>
+    <div class="a2 phase">${d.p}</div>
+    <div class="a2 label" style="margin-bottom:20px">Day ${di+1} / 30</div>
+    <div class="card a3" style="text-align:left">
+      <span class="cl">今日、これを観る</span>
+      <div class="ct">${d.m}</div>
+      <div class="cs">${d.s}</div>
+    </div>
+    <div class="a4 italic-muted" style="margin-bottom:24px">${d.c}</div>
+    <button class="btn a5" onclick="accept()">受け取る</button>
+  </div>`;
+}
+
+// ═══════════════════════════════════
+// RENDER CALENDAR
+// ═══════════════════════════════════
+function rCal(){
+  const s=load(), di=dayIdx(), el=document.getElementById('cal');
+  if(!s.startDate){
+    el.innerHTML=`<div style="text-align:center;color:var(--stone);font-family:'EB Garamond',serif;font-size:13px;letter-spacing:2px">プログラム未開始</div>`;
+    return;
+  }
+  const done=Object.values(s.entries||{}).filter(e=>e.evening_done).length;
+  let g='';
+  for(let i=0;i<30;i++){
+    const date=dateFor(i);
+    const isDone=s.entries&&s.entries[date]&&s.entries[date].evening_done;
+    const isT=i===di;
+    let c='cd';
+    if(isDone) c+=' done';
+    if(isT) c+=' today';
+    g+=`<div class="${c}">${i+1}</div>`;
+  }
+  el.innerHTML=`
+  <div style="text-align:center;width:100%;max-width:320px;">
+    <div class="a1 stats">
+      <div class="stat"><div class="sn">${done}</div><div class="sl">完了日</div></div>
+      <div class="stat"><div class="sn">${di+1}</div><div class="sl">経過日</div></div>
+      <div class="stat"><div class="sn">${30-di-1}</div><div class="sl">残り日</div></div>
+    </div>
+    <div class="a2 cg">${g}</div>
+    <div class="a3 italic-muted" style="margin-top:8px">欠けた日も、波紋の一部である</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════
+// RENDER INSIGHT
+// ═══════════════════════════════════
+function rInsight(){
+  const s=load(), el=document.getElementById('insight');
+  if(!s.startDate||!s.entries){
+    el.innerHTML=`<div style="text-align:center;color:var(--stone);font-size:14px;line-height:2.4">夕の記録が溜まると<br>ここに洞察が現れます</div>`;
+    return;
+  }
+  const entries=Object.entries(s.entries).filter(([,v])=>v.evening_done);
+  if(!entries.length){
+    el.innerHTML=`<div style="text-align:center;color:var(--stone);font-size:14px;line-height:2.4">記録がまだありません</div>`;
+    return;
+  }
+  const avg=(entries.reduce((a,[,v])=>a+(v.reaction||0),0)/entries.length).toFixed(1);
+  const notes=entries.filter(([,v])=>v.note).slice(-4);
+  const di=dayIdx(), d=D[di%D.length];
+
+  _noteExport=`## 今週のSNS心理学解剖\n\n今週は${entries.length}件の観察を記録した。\n\n現在のテーマは「**${d.p}**」。${d.c}を軸に、日常とSNSの中に現れる認知の動きを観察している。\n${notes.length?'\n---\n\n記録した気づき：\n'+notes.map(([,v])=>`- 「${v.note}」`).join('\n')+'\n\n---\n\n':''}観察を続けると、感情の動きに一瞬の間が生まれる。その間に、選択がある。\n\n#SNS心理学 #認知バイアス #観察日記 #原始仏教`;
+
+  el.innerHTML=`
+  <div style="text-align:center;max-width:320px;padding-bottom:40px">
+    <div class="a1 label" style="margin-bottom:8px">週次洞察</div>
+    <div class="a2 italic-muted" style="margin-bottom:32px">${d.p} の段階</div>
+    <div class="iblock a2">
+      <div class="il">平均反応強度</div>
+      <div class="iv">${avg}<span style="font-size:18px;color:var(--stone)"> / 5</span></div>
+    </div>
+    ${notes.length?`
+    <div style="width:100%;max-width:320px;margin-bottom:24px">
+      <div class="a3 label" style="margin-bottom:16px;text-align:center">最近の気づき</div>
+      ${notes.map(([date,v])=>`
+      <div class="ne a3">
+        <div class="nt">「${v.note}」</div>
+        <div class="nd">${date}</div>
+      </div>`).join('')}
+    </div>`:''}
+    <button class="btn a4" onclick="copyNote()" style="font-size:13px;padding:14px">note下書きをコピー</button>
+    <div id="cc"></div>
+  </div>`;
+}
+
+// ═══════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════
+function start(){
+  const s=load();
+  s.startDate=today();
+  s.entries={};
+  save(s);
+  rToday();
+}
+
+function accept(){
+  const s=load(), t=today();
+  if(!s.entries) s.entries={};
+  s.entries[t]={...s.entries[t]||{}, morning_done:true};
+  save(s); rToday();
+}
+
+function setR(v){
+  _reaction=v;
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i<v));
+}
+
+function submitE(){
+  const s=load(), t=today();
+  const note=(document.getElementById('ta')||{}).value||'';
+  if(!s.entries) s.entries={};
+  s.entries[t]={...s.entries[t]||{}, evening_done:true, reaction:_reaction, note:note.trim(), ts:Date.now()};
+  save(s); rToday();
+}
+
+function copyNote(){
+  if(!_noteExport) return;
+  navigator.clipboard.writeText(_noteExport).then(()=>{
+    const el=document.getElementById('cc');
+    if(el){el.textContent='コピーしました';el.style.opacity='1';setTimeout(()=>el.style.opacity='0',2400);}
+  });
+}
+
+// ═══════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════
+function go(name){
+  ['today','cal','insight'].forEach((n,i)=>{
+    const scr=document.getElementById('s-'+n);
+    scr.classList.toggle('on',n===name);
+    document.querySelectorAll('.nb').forEach((b,j)=>b.classList.toggle('on',j===i&&n===name));
+  });
+  if(name==='today') rToday();
+  if(name==='cal') rCal();
+  if(name==='insight') rInsight();
+}
+
+// ── INIT ──
+rToday();
+</script>
+</body>
+</html>
