@@ -17,8 +17,8 @@
   --bg:      #0C0B08;
   --surface: #141210;
   --border:  #201E18;
-  --stone:   #524F44;
-  --muted:   #8A8474;
+  --stone:   #8C8677;
+  --muted:   #A8A396;
   --text:    #D4CFBF;
   --bright:  #EDE8DC;
   --gold:    #C4A06A;
@@ -104,11 +104,11 @@ body {
   from{ opacity:0; transform:translateY(14px); }
   to  { opacity:1; transform:translateY(0); }
 }
-.a1{ animation:arise .7s .0s ease both; }
-.a2{ animation:arise .7s .12s ease both; }
-.a3{ animation:arise .7s .24s ease both; }
-.a4{ animation:arise .7s .36s ease both; }
-.a5{ animation:arise .7s .48s ease both; }
+.a1{ animation:arise .5s .0s  ease both; }
+.a2{ animation:arise .5s .06s ease both; }
+.a3{ animation:arise .5s .12s ease both; }
+.a4{ animation:arise .5s .18s ease both; }
+.a5{ animation:arise .5s .24s ease both; }
 
 @keyframes breathe {
   0%,100%{ transform:scale(1); opacity:.75; }
@@ -383,17 +383,119 @@ body {
   font-size:13px; color:var(--stone);
   width:20px; flex-shrink:0;
 }
+
+/* ── STATUS BAR ── */
+#status-bar {
+  position:fixed; top:0; left:0; right:0;
+  height:2px;
+  background:var(--border);
+  z-index:50;
+  display:none;
+}
+#status-bar.ready { display:block; background:var(--gold2); }
+
+/* ── SAVE TOAST ── */
+#save-toast {
+  position:fixed;
+  bottom:calc(72px + env(safe-area-inset-bottom, 0px));
+  left:50%; transform:translateX(-50%);
+  background:var(--gold2);
+  border:1px solid var(--gold);
+  color:var(--gold);
+  font-family:'EB Garamond',serif;
+  font-size:12px; letter-spacing:2px;
+  padding:10px 24px;
+  border-radius:2px;
+  opacity:0;
+  transition:opacity 0.3s ease;
+  pointer-events:none;
+  white-space:nowrap;
+  z-index:100;
+}
+#save-toast.show { opacity:1; }
+
+/* ── ONBOARDING OVERLAY ── */
+#onboard {
+  position:fixed; inset:0;
+  background:rgba(12,11,8,0.97);
+  z-index:200;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:48px 32px;
+  text-align:center;
+  overflow-y:auto;
+}
+#onboard.hidden { display:none; }
+.ob-title {
+  font-size:72px; font-weight:200;
+  color:var(--gold); line-height:1;
+  margin-bottom:20px;
+  font-family:'Noto Serif JP',serif;
+}
+.ob-sub {
+  font-family:'EB Garamond',serif;
+  font-size:11px; letter-spacing:4px;
+  text-transform:uppercase;
+  color:var(--stone); margin-bottom:48px;
+}
+.ob-steps {
+  list-style:none;
+  margin-bottom:48px;
+  text-align:left;
+  max-width:280px;
+}
+.ob-steps li {
+  display:flex; align-items:flex-start;
+  gap:16px; margin-bottom:24px;
+  font-size:14px; font-weight:200;
+  color:var(--text); line-height:1.8;
+}
+.ob-steps li .ok {
+  font-size:22px; color:var(--gold);
+  font-weight:200; flex-shrink:0;
+  font-family:'Noto Serif JP',serif;
+  width:28px;
+}
+.ob-note {
+  font-family:'EB Garamond',serif;
+  font-style:italic; font-size:13px;
+  color:var(--stone); margin-bottom:40px;
+  max-width:260px; line-height:1.9;
+}
 </style>
 </head>
 <body>
+
+<div id="status-bar" role="status" aria-label="App status"></div>
+
+<div id="onboard" class="hidden" role="dialog" aria-modal="true" aria-label="Welcome to 観">
+  <div class="ob-title">観</div>
+  <div class="ob-sub">30-Day Mindfulness Practice</div>
+  <ul class="ob-steps">
+    <li>
+      <span class="ok">観</span>
+      <span>Each morning, receive today's observation practice. Tap <strong>受け取る</strong> to accept.</span>
+    </li>
+    <li>
+      <span class="ok">波</span>
+      <span>After 4 PM, record your evening reflection — a reaction score and optional note.</span>
+    </li>
+    <li>
+      <span class="ok">識</span>
+      <span>Patterns emerge in Insight after a few days of recording.</span>
+    </li>
+  </ul>
+  <p class="ob-note">The "deep observation" panel reveals Buddhist psychology tools (the three poisons) and CBT cognitive distortions — use them when you want to go further.</p>
+  <button class="btn" onclick="closeOnboard()">はじめる · Begin</button>
+</div>
 
 <!-- TODAY -->
 <div class="scr on" id="s-today">
   <div class="area" id="today"></div>
   <nav class="nav">
-    <button class="nb on" onclick="go('today')">観<span>Today</span></button>
-    <button class="nb"    onclick="go('cal')">波<span>Record</span></button>
-    <button class="nb"    onclick="go('insight')">識<span>Insight</span></button>
+    <button class="nb on" onclick="go('today')" aria-label="観 (Today) — Daily mindfulness screen" title="観 · Today">観<span>Today</span></button>
+    <button class="nb"    onclick="go('cal')"     aria-label="波 (Record) — 30-day calendar view"      title="波 · Record">波<span>Record</span></button>
+    <button class="nb"    onclick="go('insight')" aria-label="識 (Insight) — Patterns and analytics"   title="識 · Insight">識<span>Insight</span></button>
   </nav>
 </div>
 
@@ -401,9 +503,9 @@ body {
 <div class="scr" id="s-cal">
   <div class="area" id="cal"></div>
   <nav class="nav">
-    <button class="nb"    onclick="go('today')">観<span>Today</span></button>
-    <button class="nb on" onclick="go('cal')">波<span>Record</span></button>
-    <button class="nb"    onclick="go('insight')">識<span>Insight</span></button>
+    <button class="nb"    onclick="go('today')"   aria-label="観 (Today) — Daily mindfulness screen" title="観 · Today">観<span>Today</span></button>
+    <button class="nb on" onclick="go('cal')"     aria-label="波 (Record) — 30-day calendar view"      title="波 · Record">波<span>Record</span></button>
+    <button class="nb"    onclick="go('insight')" aria-label="識 (Insight) — Patterns and analytics"   title="識 · Insight">識<span>Insight</span></button>
   </nav>
 </div>
 
@@ -411,11 +513,13 @@ body {
 <div class="scr" id="s-insight">
   <div class="area" id="insight"></div>
   <nav class="nav">
-    <button class="nb"    onclick="go('today')">観<span>Today</span></button>
-    <button class="nb"    onclick="go('cal')">波<span>Record</span></button>
-    <button class="nb on" onclick="go('insight')">識<span>Insight</span></button>
+    <button class="nb"    onclick="go('today')"   aria-label="観 (Today) — Daily mindfulness screen" title="観 · Today">観<span>Today</span></button>
+    <button class="nb"    onclick="go('cal')"     aria-label="波 (Record) — 30-day calendar view"      title="波 · Record">波<span>Record</span></button>
+    <button class="nb on" onclick="go('insight')" aria-label="識 (Insight) — Patterns and analytics"   title="識 · Insight">識<span>Insight</span></button>
   </nav>
 </div>
+
+<div id="save-toast">記録しました ✓</div>
 
 <script>
 // ═══════════════════════════════════
@@ -459,7 +563,25 @@ const D=[
 // ═══════════════════════════════════
 const SK='kan_v1';
 const load=()=>{ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch{ return{}; } };
-const save=s=>localStorage.setItem(SK,JSON.stringify(s));
+// Debounced save — batches rapid writes into one per 300ms
+let _saveTimer = null;
+let _pendingState = null;
+const save = (s) => {
+  _pendingState = s;
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => {
+    localStorage.setItem(SK, JSON.stringify(_pendingState));
+    _pendingState = null;
+  }, 300);
+};
+const saveFlush = () => {
+  if (_pendingState) {
+    clearTimeout(_saveTimer);
+    localStorage.setItem(SK, JSON.stringify(_pendingState));
+    _pendingState = null;
+  }
+};
+window.addEventListener('pagehide', saveFlush);
 const today=()=>new Date().toISOString().split('T')[0];
 const dayIdx=()=>{
   const s=load(); if(!s.startDate) return 0;
@@ -489,7 +611,17 @@ let _distortions = [];
 // ═══════════════════════════════════
 // SVG MANDALA
 // ═══════════════════════════════════
+const _mandalaCacheMeta = { key: null, svg: null };
+function mandalaCacheKey(di, entries) {
+  const doneDates = entries
+    ? Object.keys(entries).filter(k => entries[k].evening_done).join(',')
+    : '';
+  return `${di}|${doneDates}`;
+}
+
 function mandala(di,entries){
+  const key = mandalaCacheKey(di, entries);
+  if (_mandalaCacheMeta.key === key) return _mandalaCacheMeta.svg;
   const cx=110,cy=110,R=92,ri=40;
   let dots='';
   for(let i=0;i<30;i++){
@@ -520,12 +652,16 @@ function mandala(di,entries){
     dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${fill}" stroke="${stroke}" stroke-width="1"/>`;
   }
   const d=D[di%D.length];
-  return `<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+  const result = `<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+    <title>30-day practice mandala — Day ${di+1} progress</title>
     <circle cx="110" cy="110" r="100" fill="none" stroke="#161410" stroke-width="1"/>
     <circle cx="110" cy="110" r="52" fill="none" stroke="#161410" stroke-width="1"/>
     ${dots}
     <text x="110" y="120" text-anchor="middle" font-family="'Noto Serif JP',serif" font-weight="200" font-size="44" fill="#EDE8DC">${d.k}</text>
   </svg>`;
+  _mandalaCacheMeta.key = key;
+  _mandalaCacheMeta.svg = result;
+  return result;
 }
 
 // ═══════════════════════════════════
@@ -539,6 +675,9 @@ function rToday(){
 
   // ── First launch ──
   if(!s.startDate){
+    if(!s.onboardSeen){
+      document.getElementById('onboard').classList.remove('hidden');
+    }
     el.innerHTML=`
     <div style="text-align:center;padding:20px 0 40px">
       <div class="a1 breathe" style="font-size:104px;font-weight:200;color:var(--gold);line-height:1;margin-bottom:16px">観</div>
@@ -587,6 +726,9 @@ function rToday(){
       </div>
       <div style="text-align:center;margin:8px 0 20px" class="a4">
         <button class="expand-btn" onclick="toggleDeep()">▼ もう少し深く観る</button>
+        <div style="font-family:'EB Garamond',serif;font-size:11px;color:var(--stone);letter-spacing:1px;margin-top:4px;line-height:1.7;max-width:260px;text-align:center">
+          Buddhist psychology (three root causes of suffering) and cognitive distortion patterns
+        </div>
       </div>
       <div class="expand-panel a4" id="deep-panel">
         <div style="padding:0 0 24px;display:flex;flex-direction:column;align-items:center;gap:20px">
@@ -623,7 +765,7 @@ function rToday(){
         <div class="ct">${d.m}</div>
         <div class="cs">${d.s}</div>
       </div>
-      <div class="a4 italic-muted">16時以降に記録できます</div>
+      <div class="a4 italic-muted" style="margin-top:8px">Evening reflection opens at 16:00 (4 PM, your device time)</div>
     </div>`;
     return;
   }
@@ -706,6 +848,7 @@ function waveChart(allEntries,s){
   }
   const dots2=pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3" fill="#C4A06A"/>`).join('');
   return `<div class="wave-wrap"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <title>Reaction intensity over 30 days, scale 1-5</title>
     <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C4A06A" stop-opacity="0.2"/><stop offset="100%" stop-color="#C4A06A" stop-opacity="0"/></linearGradient></defs>
     ${yLabels}
     <path d="${areaPath}" fill="url(#wg)"/>
@@ -740,6 +883,7 @@ function ringChart(entries){
     angle+=sweep;
   });
   return `<div class="ring-wrap"><svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+    <title>Three poisons distribution: greed, anger, delusion</title>
     ${arcs}
     <text x="80" y="88" text-anchor="middle" font-family="'Noto Serif JP',serif" font-weight="200" font-size="28" fill="${colors[dominant[0]]}">${labels[dominant[0]]}</text>
   </svg></div>`;
@@ -814,6 +958,9 @@ function rInsight(){
 // ═══════════════════════════════════
 function start(){
   const s=load();
+  if(s.startDate && s.entries && Object.keys(s.entries).length > 0){
+    if(!confirm('記録がリセットされます。本当によろしいですか？\n\nAll recorded entries will be cleared. Continue?')) return;
+  }
   s.startDate=today();
   s.entries={};
   save(s);
@@ -829,7 +976,9 @@ function accept(){
 
 function setR(v){
   _reaction=v;
-  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i<v));
+  const container=document.getElementById('rdots');
+  if(!container) return;
+  container.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i<v));
 }
 
 function toggleDeep(){
@@ -839,16 +988,18 @@ function toggleDeep(){
 
 function setPoison(id){
   _poison=(_poison===id)?null:id;
-  const tags=document.querySelectorAll('#poison-tags .tag');
-  tags.forEach((t,i)=>t.classList.toggle('on',POISONS[i].id===id&&_poison===id));
+  const container=document.getElementById('poison-tags');
+  if(!container) return;
+  container.querySelectorAll('.tag').forEach((t,i)=>t.classList.toggle('on',POISONS[i].id===id&&_poison===id));
 }
 
 function toggleDist(id){
   const idx=_distortions.indexOf(id);
   if(idx>=0) _distortions.splice(idx,1);
   else if(_distortions.length<2) _distortions.push(id);
-  const tags=document.querySelectorAll('#dist-tags .tag');
-  tags.forEach((t,i)=>t.classList.toggle('on',_distortions.includes(DISTORTIONS[i].id)));
+  const container=document.getElementById('dist-tags');
+  if(!container) return;
+  container.querySelectorAll('.tag').forEach((t,i)=>t.classList.toggle('on',_distortions.includes(DISTORTIONS[i].id)));
 }
 
 function submitE(){
@@ -863,7 +1014,10 @@ function submitE(){
     distortions:_distortions.length?[..._distortions]:[],
     reframe:reframe.trim()||null
   };
-  save(s); rToday();
+  save(s);
+  const toast=document.getElementById('save-toast');
+  toast.classList.add('show');
+  setTimeout(()=>{ toast.classList.remove('show'); rToday(); }, 900);
 }
 
 function copyNote(){
@@ -888,9 +1042,16 @@ function go(name){
   if(name==='insight') rInsight();
 }
 
+function closeOnboard() {
+  document.getElementById('onboard').classList.add('hidden');
+  const s = load();
+  s.onboardSeen = true;
+  save(s);
+}
+
 // ── INIT ──
 rToday();
 </script>
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js");}</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").then(()=>{const bar=document.getElementById('status-bar');if(bar)bar.classList.add('ready');});}</script>
 </body>
 </html>

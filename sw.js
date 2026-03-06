@@ -1,4 +1,4 @@
-const CACHE = 'kan-v1';
+const CACHE = 'kan-v2';
 const ASSETS = [
   '/kan/',
   '/kan/index.html',
