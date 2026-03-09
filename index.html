@@ -12,6 +12,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --bg:      #0C0B08;
@@ -209,6 +210,24 @@ body {
   color:var(--text); font-family:'Noto Serif JP',serif; font-weight:200;
   font-size:16px; padding:8px 0; width:100%; max-width:200px; outline:none; text-align:center;
 }
+
+/* ── AUTH ── */
+.auth-input {
+  background:transparent; border:none; border-bottom:1px solid var(--border);
+  color:var(--bright); font-family:'EB Garamond',serif; font-size:18px;
+  letter-spacing:1px; padding:12px 0; width:100%; max-width:260px;
+  outline:none; text-align:center;
+}
+.auth-input::placeholder { color:var(--stone); font-size:15px; }
+#auth-msg {
+  font-family:'EB Garamond',serif; font-size:13px; letter-spacing:1px;
+  color:var(--muted); margin-top:16px; min-height:20px; text-align:center;
+  max-width:260px; line-height:1.8;
+}
+.user-badge {
+  font-family:'EB Garamond',serif; font-size:11px; letter-spacing:2px;
+  color:var(--stone); text-align:center; margin-bottom:4px;
+}
 </style>
 </head>
 <body>
@@ -306,11 +325,32 @@ function applyTheme(accent){
 }
 
 // ═══════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════
+const _sb=supabase.createClient(
+  'https://fcqdiyrzmekskxpvlcgg.supabase.co',
+  'sb_publishable_mQGtbBLVFUY_PAsIuyG4ew_sWf76GeY'
+);
+let _user=null;
+
+async function loadCloud(){
+  if(!_user) return null;
+  const {data,error}=await _sb.from('user_data').select('data').eq('user_id',_user.id).single();
+  return (error||!data)?null:data.data;
+}
+async function syncToCloud(s){
+  if(!_user) return;
+  try{ await _sb.from('user_data').upsert({user_id:_user.id,data:s,updated_at:new Date().toISOString()}); }catch(_){}
+}
+
+// ═══════════════════════════════════
 // STORAGE
 // ═══════════════════════════════════
 const SK='kan_v1';
-const load=()=>{ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch{ return{}; } };
-const save=s=>localStorage.setItem(SK,JSON.stringify(s));
+const loadLocal=()=>{ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch{ return{}; } };
+const saveLocal=s=>localStorage.setItem(SK,JSON.stringify(s));
+const load=loadLocal;
+function save(s){ saveLocal(s); syncToCloud(s); }
 const today=()=>new Date().toISOString().split('T')[0];
 const dateFor=(i,start)=>{ if(!start) return ''; const d=new Date(start); d.setDate(d.getDate()+i); return d.toISOString().split('T')[0]; };
 const dayIdx=(s)=>{ if(!s.startDate) return 0; const diff=Math.floor((new Date(today())-new Date(s.startDate))/86400000); return Math.min(diff,D.length-1); };
@@ -419,6 +459,43 @@ function mandala(di,entries,startDate){
     ${dots}
     <text x="110" y="120" text-anchor="middle" font-family="'Noto Serif JP',serif" font-weight="200" font-size="44" fill="#EDE8DC">${d.k}</text>
   </svg>`;
+}
+
+// ═══════════════════════════════════
+// AUTH
+// ═══════════════════════════════════
+function rAuth(){
+  const el=document.getElementById('today');
+  el.innerHTML=`
+  <div style="text-align:center;padding:20px 0 40px;display:flex;flex-direction:column;align-items:center">
+    <div class="a1 breathe" style="font-size:96px;font-weight:200;color:var(--gold);line-height:1;margin-bottom:20px">観</div>
+    <div class="a2 label" style="margin-bottom:48px">KAN — DAILY PRACTICE</div>
+    <div class="a3 label" style="margin-bottom:20px">メールアドレスでログイン</div>
+    <input class="auth-input a3" id="auth-email" type="email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')signIn()">
+    <div style="margin-top:28px" class="a4">
+      <button class="btn" onclick="signIn()">ログインリンクを送る</button>
+    </div>
+    <div id="auth-msg" class="a5"></div>
+  </div>`;
+  setTimeout(()=>document.getElementById('auth-email')?.focus(),400);
+}
+
+async function signIn(){
+  const email=document.getElementById('auth-email')?.value?.trim();
+  const msg=document.getElementById('auth-msg');
+  if(!email||!msg) return;
+  msg.textContent='送信中...'; msg.style.color='var(--stone)';
+  const {error}=await _sb.auth.signInWithOtp({
+    email,
+    options:{emailRedirectTo:'https://johnpascualkumar077.github.io/kan/'}
+  });
+  if(error){ msg.textContent='エラー: '+error.message; msg.style.color='#c44a4a'; }
+  else{ msg.textContent='メールを送りました。\nリンクをクリックしてください。'; msg.style.color='var(--gold)'; }
+}
+
+async function signOut(){
+  await _sb.auth.signOut();
+  _user=null; rAuth();
 }
 
 // ═══════════════════════════════════
@@ -651,6 +728,10 @@ function rCal(){
           <div class="swatch${s.profile?.accent===key?' on':''}" data-skey="${key}" style="background:${t.gold};color:#0C0B08" onclick="settingsSelectTheme('${key}')">${t.label}</div>`).join('')}
         </div>
         <button class="btn" style="margin-top:8px" onclick="saveSettings()">保存する</button>
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);width:100%;text-align:center">
+          ${_user?`<div class="user-badge">${_user.email}</div>`:''}
+          <button class="data-btn" onclick="signOut()">サインアウト</button>
+        </div>
       </div>
     </div>
   </div>`;
@@ -906,9 +987,51 @@ function go(name){
   if(name==='insight') rInsight();
 }
 
-// ── INIT ──
-(()=>{ const s=load(); if(s.profile?.accent) applyTheme(s.profile.accent); })();
-rToday();
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+async function init(){
+  // ローカルキャッシュでテーマ先行適用
+  const local=loadLocal();
+  if(local.profile?.accent) applyTheme(local.profile.accent);
+
+  // Supabaseセッション確認
+  const {data:{session}}=await _sb.auth.getSession();
+  if(session){
+    _user=session.user;
+    const cloud=await loadCloud();
+    if(cloud){
+      saveLocal(cloud);
+      if(cloud.profile?.accent) applyTheme(cloud.profile.accent);
+    } else if(local.startDate){
+      // 既存ローカルデータをクラウドに初回同期
+      syncToCloud(local);
+    }
+    rToday();
+  } else {
+    rAuth();
+  }
+
+  // 認証状態の変化を監視
+  _sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='SIGNED_IN'&&session){
+      _user=session.user;
+      const cloud=await loadCloud();
+      if(cloud){
+        saveLocal(cloud);
+        if(cloud.profile?.accent) applyTheme(cloud.profile.accent);
+      } else {
+        const loc=loadLocal();
+        if(loc.startDate) syncToCloud(loc);
+      }
+      rToday();
+    } else if(event==='SIGNED_OUT'){
+      _user=null; rAuth();
+    }
+  });
+}
+
+init();
 </script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js");}</script>
 </body>
