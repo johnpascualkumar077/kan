@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>観</title>
-<meta name="theme-color" content="#0C0B08">
+<meta name="theme-color" content="#FAF8F3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="観">
@@ -15,16 +15,16 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
-  --bg:      #0C0B08;
-  --surface: #141210;
-  --border:  #201E18;
-  --stone:   #524F44;
-  --muted:   #8A8474;
-  --text:    #D4CFBF;
-  --bright:  #EDE8DC;
-  --gold:    #C4A06A;
-  --glow:    rgba(196,160,106,0.12);
-  --gold2:   #7A6240;
+  --bg:      #FAF8F3;
+  --surface: #F0E8D8;
+  --border:  #D8CCBA;
+  --stone:   #9E8E78;
+  --muted:   #7A6A58;
+  --text:    #3A3028;
+  --bright:  #2A2018;
+  --gold:    #C4883A;
+  --glow:    rgba(196,136,58,0.15);
+  --gold2:   #8A5E22;
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html { height:100%; }
@@ -139,7 +139,7 @@ body {
 /* ── TAGS ── */
 .tags { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
 .tag { background:var(--surface); border:1px solid var(--border); color:var(--stone); font-family:'Noto Serif JP',serif; font-size:12px; font-weight:200; padding:7px 14px; border-radius:2px; cursor:pointer; transition:all .2s; }
-.tag.on { border-color:var(--gold2); color:var(--gold); background:rgba(196,160,106,0.08); }
+.tag.on { border-color:var(--gold2); color:var(--gold); background:rgba(196,136,58,0.10); }
 
 /* ── DIST HINT ── */
 #dist-hint { font-family:'EB Garamond',serif; font-size:11px; letter-spacing:1px; color:var(--stone); margin-top:8px; opacity:0; transition:opacity .4s; }
@@ -175,7 +175,7 @@ body {
 }
 .intent-opt .io-label { font-size:14px; font-weight:300; color:var(--text); margin-bottom:5px; }
 .intent-opt .io-hint { font-family:'EB Garamond',serif; font-style:italic; font-size:12px; color:var(--stone); }
-.intent-opt.on { border-color:var(--gold2); background:rgba(196,160,106,0.06); }
+.intent-opt.on { border-color:var(--gold2); background:rgba(196,136,58,0.08); }
 .intent-opt.on .io-label { color:var(--gold); }
 .swatch-row { display:flex; gap:18px; justify-content:center; margin:24px 0; }
 .swatch {
@@ -303,10 +303,10 @@ const D=[
 // PERSONALIZATION CONFIG
 // ═══════════════════════════════════
 const THEMES = {
-  gold:   { gold:'#C4A06A', gold2:'#7A6240', label:'金' },
-  jade:   { gold:'#6AA070', gold2:'#3D6B4A', label:'翠' },
-  indigo: { gold:'#6A7AC4', gold2:'#3D4B8A', label:'藍' },
-  rose:   { gold:'#C46A7A', gold2:'#8A3D4A', label:'紅' },
+  gold:   { gold:'#C4883A', gold2:'#8A5E22', label:'金' },  // 袈裟・saffron
+  jade:   { gold:'#5A9068', gold2:'#2E6040', label:'翠' },  // 蓮・lotus green
+  indigo: { gold:'#5A7AA8', gold2:'#2E4A78', label:'藍' },  // 空・dharma blue
+  rose:   { gold:'#B86850', gold2:'#7A3E28', label:'紅' },  // 土・terracotta
 };
 const INTENTS = [
   { id:'sns',     label:'SNSと距離を置く',       hint:'SNSの引力から、自由になる',       frame:'SNS上の観察を続けよう' },
@@ -438,9 +438,9 @@ function mandala(di,entries,startDate){
     const date=dateFor(i,startDate);
     const done=entries&&entries[date]&&entries[date].evening_done;
     const isT=i===di;
-    if(done) dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#7A6240" stroke="#C4A06A" stroke-width="1"/>`;
-    else if(isT) dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#0C0B08" stroke="#C4A06A" stroke-width="1.5" class="today-pulse"/>`;
-    else dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#161410" stroke="#201E18" stroke-width="1"/>`;
+    if(done) dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#8A5E22" stroke="#C4883A" stroke-width="1"/>`;
+    else if(isT) dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#FAF8F3" stroke="#C4883A" stroke-width="1.5" class="today-pulse"/>`;
+    else dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#EAE0CE" stroke="#D8CCBA" stroke-width="1"/>`;
   }
   const ws=Math.floor(di/7)*7;
   for(let i=0;i<7;i++){
@@ -450,14 +450,14 @@ function mandala(di,entries,startDate){
     const date=dateFor(idx,startDate);
     const done=entries&&entries[date]&&entries[date].evening_done;
     const isT=idx===di;
-    dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${done?'#C4A06A':isT?'#201E18':'#141210'}" stroke="${done?'#C4A06A':isT?'#C4A06A':'#201E18'}" stroke-width="1"/>`;
+    dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${done?'#C4883A':isT?'#D8CCBA':'#F0E8D8'}" stroke="${done?'#C4883A':isT?'#C4883A':'#D8CCBA'}" stroke-width="1"/>`;
   }
   const d=D[di%D.length];
   return `<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="110" cy="110" r="100" fill="none" stroke="#161410" stroke-width="1"/>
-    <circle cx="110" cy="110" r="52" fill="none" stroke="#161410" stroke-width="1"/>
+    <circle cx="110" cy="110" r="100" fill="none" stroke="#E8DCC8" stroke-width="1"/>
+    <circle cx="110" cy="110" r="52" fill="none" stroke="#E8DCC8" stroke-width="1"/>
     ${dots}
-    <text x="110" y="120" text-anchor="middle" font-family="'Noto Serif JP',serif" font-weight="200" font-size="44" fill="#EDE8DC">${d.k}</text>
+    <text x="110" y="120" text-anchor="middle" font-family="'Noto Serif JP',serif" font-weight="200" font-size="44" fill="#2A2018">${d.k}</text>
   </svg>`;
 }
 
@@ -759,15 +759,15 @@ function waveChart(allEntries,s){
   let yLabels='';
   for(let v=1;v<=5;v++){
     const y2=H-pad-(v-1)*(H-2*pad)/4;
-    yLabels+=`<text x="${pad-8}" y="${y2+3}" text-anchor="end" font-family="'EB Garamond',serif" font-size="9" fill="#524F44">${v}</text>`;
-    yLabels+=`<line x1="${pad}" y1="${y2}" x2="${W-pad}" y2="${y2}" stroke="#201E18" stroke-width="0.5"/>`;
+    yLabels+=`<text x="${pad-8}" y="${y2+3}" text-anchor="end" font-family="'EB Garamond',serif" font-size="9" fill="#9E8E78">${v}</text>`;
+    yLabels+=`<line x1="${pad}" y1="${y2}" x2="${W-pad}" y2="${y2}" stroke="#D8CCBA" stroke-width="0.5"/>`;
   }
   return `<div class="wave-wrap"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C4A06A" stop-opacity="0.2"/><stop offset="100%" stop-color="#C4A06A" stop-opacity="0"/></linearGradient></defs>
+    <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C4883A" stop-opacity="0.25"/><stop offset="100%" stop-color="#C4883A" stop-opacity="0"/></linearGradient></defs>
     ${yLabels}
     <path d="${areaPath}" fill="url(#wg)"/>
-    <path d="${path}" fill="none" stroke="#C4A06A" stroke-width="1.5"/>
-    ${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3" fill="#C4A06A"/>`).join('')}
+    <path d="${path}" fill="none" stroke="#C4883A" stroke-width="1.5"/>
+    ${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3" fill="#C4883A"/>`).join('')}
   </svg></div>`;
 }
 
@@ -775,7 +775,7 @@ function ringChart(entries){
   const counts={greed:0,anger:0,delusion:0,none:0};
   entries.forEach(([,v])=>{ if(v.poison&&counts.hasOwnProperty(v.poison)) counts[v.poison]++; else counts.none++; });
   const total=entries.length||1;
-  const colors={greed:'#C4A06A',anger:'#8A6040',delusion:'#524F44',none:'#201E18'};
+  const colors={greed:'#C4883A',anger:'#A05828',delusion:'#9E8E78',none:'#D8CCBA'};
   const labels={greed:'貪',anger:'瞋',delusion:'癡',none:'空'};
   const cx=80,cy=80,R=65,r2=45;
   let arcs='',angle=-Math.PI/2;
