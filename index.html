@@ -344,6 +344,14 @@ body {
   background:rgba(196,160,106,0.08);
 }
 
+/* ── DIST HINT ── */
+#dist-hint {
+  font-family:'EB Garamond',serif;
+  font-size:11px; letter-spacing:1px;
+  color:var(--stone); margin-top:8px;
+  opacity:0; transition:opacity .4s;
+}
+
 /* ── WAVE CHART ── */
 .wave-wrap {
   width:100%; max-width:320px;
@@ -383,6 +391,23 @@ body {
   font-size:13px; color:var(--stone);
   width:20px; flex-shrink:0;
 }
+
+/* ── DATA MANAGEMENT ── */
+.data-row {
+  display:flex; gap:20px; justify-content:center;
+  margin-top:36px; padding-top:24px;
+  border-top:1px solid var(--border);
+}
+.data-btn {
+  background:none; border:none;
+  color:var(--stone);
+  font-family:'EB Garamond',serif;
+  font-size:11px; letter-spacing:2px;
+  text-transform:uppercase;
+  cursor:pointer; padding:6px 0;
+  transition:color .3s;
+}
+.data-btn:hover { color:var(--gold); }
 </style>
 </head>
 <body>
@@ -461,18 +486,21 @@ const SK='kan_v1';
 const load=()=>{ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch{ return{}; } };
 const save=s=>localStorage.setItem(SK,JSON.stringify(s));
 const today=()=>new Date().toISOString().split('T')[0];
-const dayIdx=()=>{
-  const s=load(); if(!s.startDate) return 0;
+// FIX: pure function — no localStorage call inside
+const dateFor=(i,start)=>{ if(!start) return ''; const d=new Date(start); d.setDate(d.getDate()+i); return d.toISOString().split('T')[0]; };
+// FIX: accepts state object to avoid extra load() call
+const dayIdx=(s)=>{
+  if(!s.startDate) return 0;
   const diff=Math.floor((new Date(today())-new Date(s.startDate))/86400000);
   return Math.min(diff,D.length-1);
 };
-const dateFor=i=>{ const s=load(); if(!s.startDate) return ''; const d=new Date(s.startDate); d.setDate(d.getDate()+i); return d.toISOString().split('T')[0]; };
 let _reaction=0;
 let _noteExport='';
 // CBT x BUDDHIST DATA
+// FIX: 瞚（まばたき）→ 瞋（怒り）
 const POISONS = [
   {id:'greed',k:'貪',label:'貪（欲）',pali:'Lobha'},
-  {id:'anger',k:'瞚',label:'瞚（怒）',pali:'Dosa'},
+  {id:'anger',k:'瞋',label:'瞋（怒）',pali:'Dosa'},
   {id:'delusion',k:'癡',label:'癡（迷）',pali:'Moha'},
 ];
 const DISTORTIONS = [
@@ -489,13 +517,14 @@ let _distortions = [];
 // ═══════════════════════════════════
 // SVG MANDALA
 // ═══════════════════════════════════
-function mandala(di,entries){
+// FIX: accepts startDate param — no load() inside loop
+function mandala(di,entries,startDate){
   const cx=110,cy=110,R=92,ri=40;
   let dots='';
   for(let i=0;i<30;i++){
     const a=(i/30)*2*Math.PI-Math.PI/2;
     const x=cx+R*Math.cos(a), y=cy+R*Math.sin(a);
-    const date=dateFor(i);
+    const date=dateFor(i,startDate);
     const done=entries&&entries[date]&&entries[date].evening_done;
     const isT=i===di;
     if(done){
@@ -512,7 +541,7 @@ function mandala(di,entries){
     const idx=ws+i;
     const a=(i/7)*2*Math.PI-Math.PI/2;
     const x=cx+ri*Math.cos(a), y=cy+ri*Math.sin(a);
-    const date=dateFor(idx);
+    const date=dateFor(idx,startDate);
     const done=entries&&entries[date]&&entries[date].evening_done;
     const isT=idx===di;
     const fill=done?'#C4A06A':isT?'#201E18':'#141210';
@@ -532,9 +561,8 @@ function mandala(di,entries){
 // RENDER TODAY
 // ═══════════════════════════════════
 function rToday(){
-  const s=load(), t=today(), di=dayIdx(), d=D[di%D.length];
+  const s=load(), t=today(), di=dayIdx(s), d=D[di%D.length];
   const entry=s.entries&&s.entries[t]||{};
-  const hr=new Date().getHours();
   const el=document.getElementById('today');
 
   // ── First launch ──
@@ -563,13 +591,13 @@ function rToday(){
         ${entry.note?`<br>「${entry.note}」<br>`:''}
         <br>明日また、ここに来る。
       </div>
-      <div class="a3" style="margin-top:40px">${mandala(di,s.entries)}</div>
+      <div class="a3" style="margin-top:40px">${mandala(di,s.entries,s.startDate)}</div>
     </div>`;
     return;
   }
 
-  // ── Morning done, afternoon / evening ──
-  if(entry.morning_done&&hr>=16){
+  // ── Morning done → show evening form (FIX: 16時の時間制限を撤廃) ──
+  if(entry.morning_done){
     el.innerHTML=`
     <div style="text-align:center;max-width:340px;padding:0 0 32px">
       <div class="a1 label" style="margin-bottom:16px">夕の記録</div>
@@ -593,14 +621,15 @@ function rToday(){
           <div style="text-align:center">
             <div class="label" style="margin-bottom:12px">三毒 · TRIGUNA</div>
             <div class="tags" id="poison-tags">
-              ${POISONS.map(p=>\`<div class="tag" onclick="setPoison('\${p.id}')">\${p.k}<br><span style="font-size:10px;color:var(--stone)">\${p.pali}</span></div>\`).join('')}
+              ${POISONS.map(p=>`<div class="tag" onclick="setPoison('${p.id}')">${p.k}<br><span style="font-size:10px;color:var(--stone)">${p.pali}</span></div>`).join('')}
             </div>
           </div>
           <div style="text-align:center">
-            <div class="label" style="margin-bottom:12px">認知の歪み</div>
+            <div class="label" style="margin-bottom:12px">認知の歪み <span style="font-size:9px;color:var(--stone);letter-spacing:1px">最大2つ</span></div>
             <div class="tags" id="dist-tags">
-              ${DISTORTIONS.map(d2=>\`<div class="tag" onclick="toggleDist('\${d2.id}')">\${d2.label}</div>\`).join('')}
+              ${DISTORTIONS.map(d2=>`<div class="tag" onclick="toggleDist('${d2.id}')">${d2.label}</div>`).join('')}
             </div>
+            <div id="dist-hint">2つ選択済みです</div>
           </div>
           <textarea class="ta" id="reframe-ta" placeholder="捉え直し（仏教的視点で一言）" rows="2" style="min-height:48px"></textarea>
         </div>
@@ -611,27 +640,10 @@ function rToday(){
     return;
   }
 
-  // ── Morning done, too early for evening ──
-  if(entry.morning_done){
-    el.innerHTML=`
-    <div style="text-align:center;padding:0 0 32px">
-      <div class="a1" style="margin-bottom:32px">${mandala(di,s.entries)}</div>
-      <div class="a2 phase">${d.p}</div>
-      <div class="a2 label" style="margin-bottom:20px">Day ${di+1} · ${d.c}</div>
-      <div class="card a3" style="text-align:left">
-        <span class="cl">今日の問い</span>
-        <div class="ct">${d.m}</div>
-        <div class="cs">${d.s}</div>
-      </div>
-      <div class="a4 italic-muted">16時以降に記録できます</div>
-    </div>`;
-    return;
-  }
-
   // ── Morning not done ──
   el.innerHTML=`
   <div style="text-align:center;padding:0 0 32px">
-    <div class="a1" style="margin-bottom:32px">${mandala(di,s.entries)}</div>
+    <div class="a1" style="margin-bottom:32px">${mandala(di,s.entries,s.startDate)}</div>
     <div class="a2 phase">${d.p}</div>
     <div class="a2 label" style="margin-bottom:20px">Day ${di+1} / 30</div>
     <div class="card a3" style="text-align:left">
@@ -648,7 +660,7 @@ function rToday(){
 // RENDER CALENDAR
 // ═══════════════════════════════════
 function rCal(){
-  const s=load(), di=dayIdx(), el=document.getElementById('cal');
+  const s=load(), di=dayIdx(s), el=document.getElementById('cal');
   if(!s.startDate){
     el.innerHTML=`<div style="text-align:center;color:var(--stone);font-family:'EB Garamond',serif;font-size:13px;letter-spacing:2px">プログラム未開始</div>`;
     return;
@@ -656,7 +668,7 @@ function rCal(){
   const done=Object.values(s.entries||{}).filter(e=>e.evening_done).length;
   let g='';
   for(let i=0;i<30;i++){
-    const date=dateFor(i);
+    const date=dateFor(i,s.startDate);
     const isDone=s.entries&&s.entries[date]&&s.entries[date].evening_done;
     const isT=i===di;
     let c='cd';
@@ -673,6 +685,11 @@ function rCal(){
     </div>
     <div class="a2 cg">${g}</div>
     <div class="a3 italic-muted" style="margin-top:8px">欠けた日も、波紋の一部である</div>
+    <div class="a4 data-row">
+      <button class="data-btn" onclick="exportData()">エクスポート</button>
+      <button class="data-btn" onclick="importData()">インポート</button>
+      <button class="data-btn" id="reset-btn" onclick="resetProgram()">リセット</button>
+    </div>
   </div>`;
 }
 
@@ -683,7 +700,7 @@ function waveChart(allEntries,s){
   const W=300,H=100,pad=20;
   const pts=[];
   for(let i=0;i<30;i++){
-    const date=dateFor(i);
+    const date=dateFor(i,s.startDate);
     const e=s.entries&&s.entries[date];
     if(e&&e.evening_done&&e.reaction){
       const x=pad+i*(W-2*pad)/29;
@@ -773,7 +790,7 @@ function rInsight(){
   }
   const avg=(entries.reduce((a,[,v])=>a+(v.reaction||0),0)/entries.length).toFixed(1);
   const notes=entries.filter(([,v])=>v.note).slice(-4);
-  const di=dayIdx(), d=D[di%D.length];
+  const di=dayIdx(s), d=D[di%D.length];
 
   _noteExport=`## 今週のSNS心理学解剖\n\n今週は${entries.length}件の観察を記録した。\n\n現在のテーマは「**${d.p}**」。${d.c}を軸に、日常とSNSの中に現れる認知の動きを観察している。\n${notes.length?'\n---\n\n記録した気づき：\n'+notes.map(([,v])=>`- 「${v.note}」`).join('\n')+'\n\n---\n\n':''}観察を続けると、感情の動きに一瞬の間が生まれる。その間に、選択がある。\n\n#SNS心理学 #認知バイアス #観察日記 #原始仏教`;
 
@@ -843,10 +860,18 @@ function setPoison(id){
   tags.forEach((t,i)=>t.classList.toggle('on',POISONS[i].id===id&&_poison===id));
 }
 
+// FIX: 2つ上限に達したときヒントを表示
 function toggleDist(id){
   const idx=_distortions.indexOf(id);
-  if(idx>=0) _distortions.splice(idx,1);
-  else if(_distortions.length<2) _distortions.push(id);
+  if(idx>=0){
+    _distortions.splice(idx,1);
+  } else if(_distortions.length<2){
+    _distortions.push(id);
+  } else {
+    const hint=document.getElementById('dist-hint');
+    if(hint){ hint.style.opacity='1'; setTimeout(()=>hint.style.opacity='0',1800); }
+    return;
+  }
   const tags=document.querySelectorAll('#dist-tags .tag');
   tags.forEach((t,i)=>t.classList.toggle('on',_distortions.includes(DISTORTIONS[i].id)));
 }
@@ -866,22 +891,96 @@ function submitE(){
   save(s); rToday();
 }
 
+// FIX: クリップボード失敗時のフォールバック
 function copyNote(){
   if(!_noteExport) return;
-  navigator.clipboard.writeText(_noteExport).then(()=>{
+  const showMsg=(text)=>{
     const el=document.getElementById('cc');
-    if(el){el.textContent='コピーしました';el.style.opacity='1';setTimeout(()=>el.style.opacity='0',2400);}
-  });
+    if(el){el.textContent=text;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',2400);}
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(_noteExport)
+      .then(()=>showMsg('コピーしました'))
+      .catch(()=>{ showMsg('コピー失敗'); prompt('手動でコピーしてください:',_noteExport); });
+  } else {
+    showMsg('コピー失敗');
+    prompt('手動でコピーしてください:',_noteExport);
+  }
+}
+
+// ── データエクスポート（JSONダウンロード）
+function exportData(){
+  const s=load();
+  const blob=new Blob([JSON.stringify(s,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='kan_backup_'+today()+'.json';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+// ── データインポート（JSONファイルから復元）
+function importData(){
+  const input=document.createElement('input');
+  input.type='file'; input.accept='.json';
+  input.onchange=e=>{
+    const file=e.target.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        if(!data.startDate||typeof data.startDate!=='string') throw new Error('invalid');
+        save(data);
+        go('today');
+      }catch{
+        const el=document.getElementById('cal');
+        if(el){
+          const msg=document.createElement('div');
+          msg.style.cssText='color:#c44a4a;font-size:12px;margin-top:12px;font-family:EB Garamond,serif;letter-spacing:1px';
+          msg.textContent='ファイルが正しくありません';
+          el.querySelector('.data-row').after(msg);
+          setTimeout(()=>msg.remove(),3000);
+        }
+      }
+    };
+    reader.readAsText(file);
+  };
+  document.body.appendChild(input);
+  input.click();
+  document.body.removeChild(input);
+}
+
+// ── リセット（2タップ確認）
+function resetProgram(){
+  const btn=document.getElementById('reset-btn');
+  if(!btn) return;
+  if(btn.dataset.confirm!=='1'){
+    btn.textContent='本当に削除する';
+    btn.dataset.confirm='1';
+    btn.style.color='#c44a4a';
+    setTimeout(()=>{
+      if(btn.dataset.confirm==='1'){
+        btn.textContent='リセット';
+        btn.dataset.confirm='0';
+        btn.style.color='';
+      }
+    },3000);
+    return;
+  }
+  localStorage.removeItem(SK);
+  go('today');
 }
 
 // ═══════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════
+// FIX: 各スクリーン内のナビボタンを正しく更新
 function go(name){
-  ['today','cal','insight'].forEach((n,i)=>{
-    const scr=document.getElementById('s-'+n);
-    scr.classList.toggle('on',n===name);
-    document.querySelectorAll('.nb').forEach((b,j)=>b.classList.toggle('on',j===i&&n===name));
+  const tabs=['today','cal','insight'];
+  tabs.forEach(n=>{
+    document.getElementById('s-'+n).classList.toggle('on',n===name);
+    document.querySelectorAll('#s-'+n+' .nb').forEach((b,j)=>b.classList.toggle('on',tabs[j]===name));
   });
   if(name==='today') rToday();
   if(name==='cal') rCal();
