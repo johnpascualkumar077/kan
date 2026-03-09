@@ -36,8 +36,6 @@ body {
   -webkit-font-smoothing:antialiased;
   overflow:hidden;
 }
-
-/* ── SCREENS ── */
 .scr {
   position:absolute; inset:0;
   display:flex; flex-direction:column;
@@ -45,182 +43,67 @@ body {
   transition:opacity 0.5s ease;
 }
 .scr.on { opacity:1; pointer-events:all; }
-
-/* ── SCROLL AREA ── */
 .area {
-  flex:1;
-  overflow-y:auto;
-  overflow-x:hidden;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  display:flex; flex-direction:column; align-items:center;
   padding:48px 28px 24px;
   -webkit-overflow-scrolling:touch;
 }
-
-/* ── NAV ── */
 .nav {
-  flex-shrink:0;
-  display:flex;
-  justify-content:center;
-  border-top:1px solid var(--border);
-  background:var(--bg);
+  flex-shrink:0; display:flex; justify-content:center;
+  border-top:1px solid var(--border); background:var(--bg);
   padding-bottom:env(safe-area-inset-bottom, 0);
 }
 .nb {
-  flex:1; max-width:110px;
-  padding:14px 8px 16px;
-  background:none; border:none;
-  color:var(--stone);
-  font-family:'Noto Serif JP',serif;
-  font-size:20px;
-  cursor:pointer;
-  display:flex; flex-direction:column;
-  align-items:center; gap:4px;
+  flex:1; max-width:110px; padding:14px 8px 16px;
+  background:none; border:none; color:var(--stone);
+  font-family:'Noto Serif JP',serif; font-size:20px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
   transition:color 0.3s;
 }
-.nb span {
-  font-family:'EB Garamond',serif;
-  font-size:9px; letter-spacing:2px;
-  text-transform:uppercase;
-}
+.nb span { font-family:'EB Garamond',serif; font-size:9px; letter-spacing:2px; text-transform:uppercase; }
 .nb.on { color:var(--gold); }
 
 /* ── MANDALA ── */
-.mandala-wrap {
-  width:220px; height:220px;
-  margin-bottom:36px;
-  flex-shrink:0;
-}
-.mandala-wrap svg { width:100%; height:100%; }
-@keyframes pulse-dot {
-  0%,100%{ r:8; opacity:.9; }
-  50%{ r:10; opacity:1; }
-}
+@keyframes pulse-dot { 0%,100%{ r:8; opacity:.9; } 50%{ r:10; opacity:1; } }
 .today-pulse { animation: pulse-dot 2s ease-in-out infinite; }
 
 /* ── ANIMATIONS ── */
-@keyframes arise {
-  from{ opacity:0; transform:translateY(14px); }
-  to  { opacity:1; transform:translateY(0); }
-}
+@keyframes arise { from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
 .a1{ animation:arise .7s .0s ease both; }
 .a2{ animation:arise .7s .12s ease both; }
 .a3{ animation:arise .7s .24s ease both; }
 .a4{ animation:arise .7s .36s ease both; }
 .a5{ animation:arise .7s .48s ease both; }
-
-@keyframes breathe {
-  0%,100%{ transform:scale(1); opacity:.75; }
-  50%    { transform:scale(1.04); opacity:1; }
-}
+@keyframes breathe { 0%,100%{ transform:scale(1); opacity:.75; } 50%{ transform:scale(1.04); opacity:1; } }
 .breathe{ animation:breathe 4s ease-in-out infinite; }
 
 /* ── TYPOGRAPHY ── */
-.label {
-  font-family:'EB Garamond',serif;
-  font-size:11px; letter-spacing:4px;
-  text-transform:uppercase;
-  color:var(--stone);
-}
-.italic-muted {
-  font-family:'EB Garamond',serif;
-  font-style:italic; font-size:14px;
-  color:var(--stone); text-align:center;
-}
+.label { font-family:'EB Garamond',serif; font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--stone); }
+.italic-muted { font-family:'EB Garamond',serif; font-style:italic; font-size:14px; color:var(--stone); text-align:center; }
 
 /* ── CARD ── */
-.card {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:3px;
-  padding:24px 24px;
-  width:100%; max-width:340px;
-  margin-bottom:24px;
-}
-.card .cl {
-  font-family:'EB Garamond',serif;
-  font-size:11px; letter-spacing:3px;
-  text-transform:uppercase;
-  color:var(--stone);
-  display:block; margin-bottom:12px;
-}
-.card .ct {
-  font-size:15px; font-weight:300;
-  color:var(--bright); line-height:2;
-}
-.card .cs {
-  font-size:13px; font-weight:200;
-  color:var(--muted); line-height:2;
-  margin-top:14px; padding-top:14px;
-  border-top:1px solid var(--border);
-}
+.card { background:var(--surface); border:1px solid var(--border); border-radius:3px; padding:24px; width:100%; max-width:340px; margin-bottom:24px; }
+.card .cl { font-family:'EB Garamond',serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--stone); display:block; margin-bottom:12px; }
+.card .ct { font-size:15px; font-weight:300; color:var(--bright); line-height:2; }
+.card .cs { font-size:13px; font-weight:200; color:var(--muted); line-height:2; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); }
 
 /* ── BUTTON ── */
-.btn {
-  background:none;
-  border:1px solid var(--gold2);
-  color:var(--gold);
-  font-family:'Noto Serif JP',serif;
-  font-weight:300; font-size:14px;
-  padding:15px 48px;
-  border-radius:2px;
-  cursor:pointer; letter-spacing:2px;
-  transition:all .25s ease;
-  width:100%; max-width:280px;
-}
-.btn:hover,.btn:active {
-  background:var(--gold2);
-  border-color:var(--gold);
-  color:var(--bright);
-}
+.btn { background:none; border:1px solid var(--gold2); color:var(--gold); font-family:'Noto Serif JP',serif; font-weight:300; font-size:14px; padding:15px 48px; border-radius:2px; cursor:pointer; letter-spacing:2px; transition:all .25s ease; width:100%; max-width:280px; }
+.btn:hover,.btn:active { background:var(--gold2); border-color:var(--gold); color:var(--bright); }
 
 /* ── DOTS ── */
 .dots { display:flex; gap:12px; }
-.dot {
-  width:13px; height:13px;
-  border-radius:50%;
-  border:1px solid var(--stone);
-  cursor:pointer;
-  transition:all .2s;
-  background:transparent;
-}
-.dot.on {
-  background:var(--gold);
-  border-color:var(--gold);
-  box-shadow:0 0 10px var(--glow);
-}
+.dot { width:13px; height:13px; border-radius:50%; border:1px solid var(--stone); cursor:pointer; transition:all .2s; background:transparent; }
+.dot.on { background:var(--gold); border-color:var(--gold); box-shadow:0 0 10px var(--glow); }
 
 /* ── TEXTAREA ── */
-.ta {
-  background:transparent;
-  border:none; border-bottom:1px solid var(--border);
-  color:var(--text);
-  font-family:'Noto Serif JP',serif;
-  font-weight:200; font-size:15px;
-  padding:14px 0; width:100%;
-  max-width:320px; resize:none;
-  outline:none; line-height:2;
-  text-align:center; min-height:72px;
-}
+.ta { background:transparent; border:none; border-bottom:1px solid var(--border); color:var(--text); font-family:'Noto Serif JP',serif; font-weight:200; font-size:15px; padding:14px 0; width:100%; max-width:320px; resize:none; outline:none; line-height:2; text-align:center; min-height:72px; }
 .ta::placeholder{ color:var(--stone); }
 
 /* ── CALENDAR GRID ── */
-.cg {
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:7px;
-  width:100%; max-width:320px;
-  margin:24px 0;
-}
-.cd {
-  aspect-ratio:1;
-  border-radius:50%;
-  border:1px solid var(--border);
-  display:flex; align-items:center; justify-content:center;
-  font-family:'EB Garamond',serif; font-size:12px;
-  color:var(--stone); transition:all .3s;
-}
+.cg { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; width:100%; max-width:320px; margin:24px 0; }
+.cd { aspect-ratio:1; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:'EB Garamond',serif; font-size:12px; color:var(--stone); transition:all .3s; }
 .cd.done { background:var(--gold2); border-color:var(--gold2); color:var(--gold); }
 .cd.today { border-color:var(--gold); color:var(--bright); }
 .cd.done.today { background:var(--gold); border-color:var(--gold); color:var(--bg); }
@@ -228,186 +111,104 @@ body {
 /* ── STATS ── */
 .stats { display:flex; gap:36px; margin-bottom:32px; }
 .stat { text-align:center; }
-.sn {
-  font-family:'EB Garamond',serif;
-  font-size:38px; color:var(--gold); line-height:1;
-}
-.sl {
-  font-family:'EB Garamond',serif;
-  font-size:10px; letter-spacing:2px;
-  text-transform:uppercase; color:var(--stone);
-  margin-top:6px;
-}
+.sn { font-family:'EB Garamond',serif; font-size:38px; color:var(--gold); line-height:1; }
+.sl { font-family:'EB Garamond',serif; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--stone); margin-top:6px; }
 
-/* ── PHASE BADGE ── */
-.phase {
-  font-family:'EB Garamond',serif;
-  font-size:10px; letter-spacing:3px;
-  text-transform:uppercase; color:var(--gold2);
-  border:1px solid var(--border);
-  padding:4px 14px; margin-bottom:20px;
-}
-
-/* ── SEP LINE ── */
+/* ── MISC ── */
+.phase { font-family:'EB Garamond',serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--gold2); border:1px solid var(--border); padding:4px 14px; margin-bottom:20px; }
 .sep { width:1px; height:32px; background:var(--border); margin:16px auto; }
+.ck { font-size:96px; font-weight:200; color:var(--gold); line-height:1; text-align:center; }
+.cm { font-size:15px; font-weight:200; color:var(--muted); line-height:2.4; text-align:center; max-width:270px; margin-top:28px; }
 
-/* ── COMPLETE BIG KANJI ── */
-.ck {
-  font-size:96px; font-weight:200;
-  color:var(--gold); line-height:1;
-  text-align:center;
-}
-.cm {
-  font-size:15px; font-weight:200;
-  color:var(--muted); line-height:2.4;
-  text-align:center; max-width:270px;
-  margin-top:28px;
-}
+/* ── INSIGHT ── */
+.iblock { background:var(--surface); border:1px solid var(--border); padding:22px 24px; width:100%; max-width:320px; margin-bottom:20px; text-align:center; }
+.iblock .il { font-family:'EB Garamond',serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--stone); margin-bottom:12px; }
+.iblock .iv { font-family:'EB Garamond',serif; font-size:44px; color:var(--gold); line-height:1; }
+.ne { border-bottom:1px solid var(--border); padding:14px 0; text-align:left; width:100%; max-width:320px; }
+.ne .nt { font-size:13px; font-weight:200; color:var(--muted); line-height:1.9; }
+.ne .nd { font-family:'EB Garamond',serif; font-size:11px; color:var(--stone); margin-top:4px; }
+#cc { font-family:'EB Garamond',serif; font-size:12px; letter-spacing:2px; color:var(--gold); margin-top:12px; opacity:0; transition:opacity .4s; }
 
-/* ── INSIGHT BLOCK ── */
-.iblock {
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:22px 24px;
-  width:100%; max-width:320px;
-  margin-bottom:20px;
-  text-align:center;
-}
-.iblock .il {
-  font-family:'EB Garamond',serif;
-  font-size:11px; letter-spacing:3px;
-  text-transform:uppercase; color:var(--stone);
-  margin-bottom:12px;
-}
-.iblock .iv {
-  font-family:'EB Garamond',serif;
-  font-size:44px; color:var(--gold); line-height:1;
-}
-
-/* ── NOTE ENTRY ── */
-.ne {
-  border-bottom:1px solid var(--border);
-  padding:14px 0; text-align:left;
-  width:100%; max-width:320px;
-}
-.ne .nt {
-  font-size:13px; font-weight:200;
-  color:var(--muted); line-height:1.9;
-}
-.ne .nd {
-  font-family:'EB Garamond',serif;
-  font-size:11px; color:var(--stone);
-  margin-top:4px;
-}
-
-/* ── COPY CONFIRM ── */
-#cc {
-  font-family:'EB Garamond',serif;
-  font-size:12px; letter-spacing:2px;
-  color:var(--gold); margin-top:12px;
-  opacity:0; transition:opacity .4s;
-}
-
-/* ── EXPAND PANEL ── */
-.expand-btn {
-  background:none; border:none;
-  color:var(--stone);
-  font-family:'EB Garamond',serif;
-  font-size:12px; letter-spacing:2px;
-  cursor:pointer; padding:8px 0;
-  transition:color .3s;
-}
+/* ── EXPAND ── */
+.expand-btn { background:none; border:none; color:var(--stone); font-family:'EB Garamond',serif; font-size:12px; letter-spacing:2px; cursor:pointer; padding:8px 0; transition:color .3s; }
 .expand-btn:hover { color:var(--gold); }
-.expand-panel {
-  max-height:0; overflow:hidden;
-  transition:max-height .4s ease;
-  width:100%; max-width:320px;
-}
-.expand-panel.open { max-height:600px; }
+.expand-panel { max-height:0; overflow:hidden; transition:max-height .4s ease; width:100%; max-width:320px; }
+.expand-panel.open { max-height:900px; }
 
 /* ── TAGS ── */
 .tags { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
-.tag {
-  background:var(--surface);
-  border:1px solid var(--border);
-  color:var(--stone);
-  font-family:'Noto Serif JP',serif;
-  font-size:12px; font-weight:200;
-  padding:7px 14px;
-  border-radius:2px;
-  cursor:pointer;
-  transition:all .2s;
-}
-.tag.on {
-  border-color:var(--gold2);
-  color:var(--gold);
-  background:rgba(196,160,106,0.08);
-}
+.tag { background:var(--surface); border:1px solid var(--border); color:var(--stone); font-family:'Noto Serif JP',serif; font-size:12px; font-weight:200; padding:7px 14px; border-radius:2px; cursor:pointer; transition:all .2s; }
+.tag.on { border-color:var(--gold2); color:var(--gold); background:rgba(196,160,106,0.08); }
 
 /* ── DIST HINT ── */
-#dist-hint {
-  font-family:'EB Garamond',serif;
-  font-size:11px; letter-spacing:1px;
-  color:var(--stone); margin-top:8px;
-  opacity:0; transition:opacity .4s;
-}
+#dist-hint { font-family:'EB Garamond',serif; font-size:11px; letter-spacing:1px; color:var(--stone); margin-top:8px; opacity:0; transition:opacity .4s; }
 
-/* ── WAVE CHART ── */
-.wave-wrap {
-  width:100%; max-width:320px;
-  margin-bottom:24px;
-}
+/* ── CHARTS ── */
+.wave-wrap { width:100%; max-width:320px; margin-bottom:24px; }
 .wave-wrap svg { width:100%; height:auto; }
-
-/* ── RING CHART ── */
-.ring-wrap {
-  width:160px; height:160px;
-  margin:0 auto 24px;
-}
+.ring-wrap { width:160px; height:160px; margin:0 auto 24px; }
 .ring-wrap svg { width:100%; height:100%; }
-
-/* ── BAR CHART ── */
-.bar-row {
-  display:flex; align-items:center; gap:10px;
-  margin-bottom:8px; width:100%; max-width:280px;
-}
-.bar-label {
-  font-size:11px; font-weight:200;
-  color:var(--muted); width:80px;
-  text-align:right; flex-shrink:0;
-}
-.bar-track {
-  flex:1; height:6px;
-  background:var(--border); border-radius:3px;
-  overflow:hidden;
-}
-.bar-fill {
-  height:100%; background:var(--gold2);
-  border-radius:3px;
-  transition:width .6s ease;
-}
-.bar-count {
-  font-family:'EB Garamond',serif;
-  font-size:13px; color:var(--stone);
-  width:20px; flex-shrink:0;
-}
+.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; width:100%; max-width:280px; }
+.bar-label { font-size:11px; font-weight:200; color:var(--muted); width:80px; text-align:right; flex-shrink:0; }
+.bar-track { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.bar-fill { height:100%; background:var(--gold2); border-radius:3px; transition:width .6s ease; }
+.bar-count { font-family:'EB Garamond',serif; font-size:13px; color:var(--stone); width:20px; flex-shrink:0; }
 
 /* ── DATA MANAGEMENT ── */
-.data-row {
-  display:flex; gap:20px; justify-content:center;
-  margin-top:36px; padding-top:24px;
-  border-top:1px solid var(--border);
-}
-.data-btn {
-  background:none; border:none;
-  color:var(--stone);
-  font-family:'EB Garamond',serif;
-  font-size:11px; letter-spacing:2px;
-  text-transform:uppercase;
-  cursor:pointer; padding:6px 0;
-  transition:color .3s;
-}
+.data-row { display:flex; gap:20px; justify-content:center; margin-top:36px; padding-top:24px; border-top:1px solid var(--border); }
+.data-btn { background:none; border:none; color:var(--stone); font-family:'EB Garamond',serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; padding:6px 0; transition:color .3s; }
 .data-btn:hover { color:var(--gold); }
+
+/* ── ONBOARDING ── */
+.ob-input {
+  background:transparent; border:none; border-bottom:1px solid var(--border);
+  color:var(--bright); font-family:'Noto Serif JP',serif; font-weight:200;
+  font-size:22px; padding:12px 0; width:100%; max-width:220px;
+  outline:none; text-align:center; letter-spacing:3px;
+}
+.ob-input::placeholder { color:var(--stone); font-size:15px; letter-spacing:1px; }
+.intent-opt {
+  background:var(--surface); border:1px solid var(--border);
+  padding:16px 20px; width:100%; max-width:300px; border-radius:2px;
+  cursor:pointer; text-align:left; transition:all .25s;
+}
+.intent-opt .io-label { font-size:14px; font-weight:300; color:var(--text); margin-bottom:5px; }
+.intent-opt .io-hint { font-family:'EB Garamond',serif; font-style:italic; font-size:12px; color:var(--stone); }
+.intent-opt.on { border-color:var(--gold2); background:rgba(196,160,106,0.06); }
+.intent-opt.on .io-label { color:var(--gold); }
+.swatch-row { display:flex; gap:18px; justify-content:center; margin:24px 0; }
+.swatch {
+  width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:'Noto Serif JP',serif; font-weight:200; font-size:18px;
+  cursor:pointer; border:2px solid transparent; transition:all .25s;
+}
+.swatch.on { border-color:var(--bright); box-shadow:0 0 16px var(--glow); }
+
+/* ── ADAPTIVE INSIGHT ── */
+.insight-personal {
+  background:var(--surface); border:1px solid var(--border);
+  border-left:2px solid var(--gold2); padding:18px 20px;
+  width:100%; max-width:320px; margin-bottom:20px; text-align:left;
+}
+.insight-personal p { font-size:13px; font-weight:200; color:var(--muted); line-height:2.2; margin-bottom:8px; }
+.insight-personal p:last-child { margin-bottom:0; }
+
+/* ── INTENT BADGE ── */
+.intent-badge {
+  font-family:'EB Garamond',serif; font-size:10px; letter-spacing:2px;
+  color:var(--gold2); border:1px solid var(--gold2); padding:3px 10px;
+  margin-bottom:16px; display:inline-block;
+}
+
+/* ── SETTINGS ── */
+.settings-panel { max-height:0; overflow:hidden; transition:max-height .5s ease; width:100%; max-width:320px; }
+.settings-panel.open { max-height:700px; }
+.settings-section { padding:20px 0 8px; display:flex; flex-direction:column; align-items:center; gap:14px; }
+.settings-input {
+  background:transparent; border:none; border-bottom:1px solid var(--border);
+  color:var(--text); font-family:'Noto Serif JP',serif; font-weight:200;
+  font-size:16px; padding:8px 0; width:100%; max-width:200px; outline:none; text-align:center;
+}
 </style>
 </head>
 <body>
@@ -444,7 +245,7 @@ body {
 
 <script>
 // ═══════════════════════════════════
-// 30 DAYS OF PRACTICE
+// 30 DAYS
 // ═══════════════════════════════════
 const D=[
   {k:'観',p:'外を観る',   m:'SNSで最初に感情が動いた投稿を一つ記憶する',              s:'その投稿を見たとき、胸・腹・喉のどこかが反応したか気づく',  c:'正念 · Sati'},
@@ -480,44 +281,114 @@ const D=[
 ];
 
 // ═══════════════════════════════════
+// PERSONALIZATION CONFIG
+// ═══════════════════════════════════
+const THEMES = {
+  gold:   { gold:'#C4A06A', gold2:'#7A6240', label:'金' },
+  jade:   { gold:'#6AA070', gold2:'#3D6B4A', label:'翠' },
+  indigo: { gold:'#6A7AC4', gold2:'#3D4B8A', label:'藍' },
+  rose:   { gold:'#C46A7A', gold2:'#8A3D4A', label:'紅' },
+};
+const INTENTS = [
+  { id:'sns',     label:'SNSと距離を置く',       hint:'SNSの引力から、自由になる',       frame:'SNS上の観察を続けよう' },
+  { id:'emotion', label:'感情を安定させる',       hint:'ゆらぎを観察し、乗りこなす',      frame:'感情の動きを細かく感じよう' },
+  { id:'bias',    label:'認知バイアスを理解する', hint:'思考の歪みを知り、自由になる',    frame:'認知の歪みがどこに現れるか観よう' },
+  { id:'observe', label:'ただ、観察する',         hint:'目的なく、ただ在る練習をする',    frame:'ただ在ることで十分だ' },
+];
+
+function applyTheme(accent){
+  const t=THEMES[accent]||THEMES.gold;
+  const r=document.documentElement;
+  r.style.setProperty('--gold',t.gold);
+  r.style.setProperty('--gold2',t.gold2);
+  const h=t.gold, ri=parseInt(h.slice(1,3),16), gi=parseInt(h.slice(3,5),16), bi=parseInt(h.slice(5,7),16);
+  r.style.setProperty('--glow',`rgba(${ri},${gi},${bi},0.12)`);
+}
+
+// ═══════════════════════════════════
 // STORAGE
 // ═══════════════════════════════════
 const SK='kan_v1';
 const load=()=>{ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch{ return{}; } };
 const save=s=>localStorage.setItem(SK,JSON.stringify(s));
 const today=()=>new Date().toISOString().split('T')[0];
-// FIX: pure function — no localStorage call inside
 const dateFor=(i,start)=>{ if(!start) return ''; const d=new Date(start); d.setDate(d.getDate()+i); return d.toISOString().split('T')[0]; };
-// FIX: accepts state object to avoid extra load() call
-const dayIdx=(s)=>{
-  if(!s.startDate) return 0;
-  const diff=Math.floor((new Date(today())-new Date(s.startDate))/86400000);
-  return Math.min(diff,D.length-1);
-};
-let _reaction=0;
-let _noteExport='';
-// CBT x BUDDHIST DATA
-// FIX: 瞚（まばたき）→ 瞋（怒り）
-const POISONS = [
+const dayIdx=(s)=>{ if(!s.startDate) return 0; const diff=Math.floor((new Date(today())-new Date(s.startDate))/86400000); return Math.min(diff,D.length-1); };
+
+const POISONS=[
   {id:'greed',k:'貪',label:'貪（欲）',pali:'Lobha'},
   {id:'anger',k:'瞋',label:'瞋（怒）',pali:'Dosa'},
   {id:'delusion',k:'癡',label:'癡（迷）',pali:'Moha'},
 ];
-const DISTORTIONS = [
+const DISTORTIONS=[
   {id:'should',label:'べき思考'},
   {id:'black_white',label:'白黒思考'},
   {id:'overgener',label:'過度の一般化'},
   {id:'mind_read',label:'読心術'},
   {id:'catastrophe',label:'破局化'},
 ];
-let _poison = null;
-let _distortions = [];
 
+let _reaction=0, _noteExport='', _poison=null, _distortions=[];
+
+// ── Onboarding state
+let _ob={ step:0, name:'', intent:'', accent:'gold' };
+
+// ═══════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════
+function greeting(name){
+  const hr=new Date().getHours();
+  if(!name) return '';
+  if(hr<12) return `おはよう、${name}。`;
+  if(hr<17) return `こんにちは、${name}。`;
+  return `おかえり、${name}。`;
+}
+
+function calcStreak(entries){
+  const done=entries.filter(([,v])=>v.evening_done).map(([d])=>d).sort().reverse();
+  if(!done.length) return 0;
+  let streak=0, check=today();
+  for(const d of done){
+    if(d===check){ streak++; const dt=new Date(check); dt.setDate(dt.getDate()-1); check=dt.toISOString().split('T')[0]; }
+    else if(d<check) break;
+  }
+  return streak;
+}
+
+function adaptiveInsight(entries, profile){
+  if(!profile||entries.length<3) return '';
+  const pc={greed:0,anger:0,delusion:0};
+  const dc={};
+  let totalR=0, countR=0;
+  entries.forEach(([,v])=>{
+    if(v.poison&&pc.hasOwnProperty(v.poison)) pc[v.poison]++;
+    if(v.distortions) v.distortions.forEach(id=>dc[id]=(dc[id]||0)+1);
+    if(v.reaction){ totalR+=v.reaction; countR++; }
+  });
+  const avgR=countR?totalR/countR:0;
+  const topPoison=Object.entries(pc).sort((a,b)=>b[1]-a[1])[0];
+  const topDist=Object.entries(dc).sort((a,b)=>b[1]-a[1])[0];
+  const streak=calcStreak(entries);
+  const msgs=[];
+  const poisonMsgs={
+    greed:'貪りへの気づきが多い。欲しいという感覚そのものを、批判せずに観察しよう。',
+    anger:'瞋の反応が繰り返し現れている。怒りは情報だ。ただ「瞋がある」と名前をつけよう。',
+    delusion:'癡（思い込み）が出やすい傾向がある。「本当にそうか？」と一息置いて問おう。'
+  };
+  if(topPoison&&topPoison[1]>0&&poisonMsgs[topPoison[0]]) msgs.push(poisonMsgs[topPoison[0]]);
+  if(topDist&&topDist[1]>1){
+    const dl=DISTORTIONS.find(d=>d.id===topDist[0])?.label;
+    if(dl) msgs.push(`「${dl}」が繰り返し現れている。このパターンに気づくだけで、変化は始まる。`);
+  }
+  if(avgR>3.5) msgs.push('反応強度が全体的に高い。呼吸に戻る練習を意識的に増やしてみよう。');
+  if(streak>=7) msgs.push(`${streak}日連続で記録している。継続そのものが、観察の力になる。`);
+  else if(streak>=3) msgs.push(`${streak}日続いている。この積み重ねに気づこう。`);
+  return msgs.join('\n');
+}
 
 // ═══════════════════════════════════
 // SVG MANDALA
 // ═══════════════════════════════════
-// FIX: accepts startDate param — no load() inside loop
 function mandala(di,entries,startDate){
   const cx=110,cy=110,R=92,ri=40;
   let dots='';
@@ -527,15 +398,10 @@ function mandala(di,entries,startDate){
     const date=dateFor(i,startDate);
     const done=entries&&entries[date]&&entries[date].evening_done;
     const isT=i===di;
-    if(done){
-      dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#7A6240" stroke="#C4A06A" stroke-width="1"/>`;
-    } else if(isT){
-      dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#0C0B08" stroke="#C4A06A" stroke-width="1.5" class="today-pulse"/>`;
-    } else {
-      dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#161410" stroke="#201E18" stroke-width="1"/>`;
-    }
+    if(done) dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#7A6240" stroke="#C4A06A" stroke-width="1"/>`;
+    else if(isT) dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#0C0B08" stroke="#C4A06A" stroke-width="1.5" class="today-pulse"/>`;
+    else dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#161410" stroke="#201E18" stroke-width="1"/>`;
   }
-  // inner week ring
   const ws=Math.floor(di/7)*7;
   for(let i=0;i<7;i++){
     const idx=ws+i;
@@ -544,9 +410,7 @@ function mandala(di,entries,startDate){
     const date=dateFor(idx,startDate);
     const done=entries&&entries[date]&&entries[date].evening_done;
     const isT=idx===di;
-    const fill=done?'#C4A06A':isT?'#201E18':'#141210';
-    const stroke=done?'#C4A06A':isT?'#C4A06A':'#201E18';
-    dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${fill}" stroke="${stroke}" stroke-width="1"/>`;
+    dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${done?'#C4A06A':isT?'#201E18':'#141210'}" stroke="${done?'#C4A06A':isT?'#C4A06A':'#201E18'}" stroke-width="1"/>`;
   }
   const d=D[di%D.length];
   return `<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
@@ -558,28 +422,102 @@ function mandala(di,entries,startDate){
 }
 
 // ═══════════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════════
+function rOnboard(){
+  const el=document.getElementById('today');
+  if(_ob.step===0){
+    el.innerHTML=`
+    <div style="text-align:center;padding:20px 0 40px;display:flex;flex-direction:column;align-items:center;gap:0">
+      <div class="a1 breathe" style="font-size:96px;font-weight:200;color:var(--gold);line-height:1;margin-bottom:20px">観</div>
+      <div class="a2 label" style="margin-bottom:40px">KAN — DAILY PRACTICE</div>
+      <div class="a3" style="font-size:13px;font-weight:200;color:var(--muted);line-height:2.6;max-width:260px;margin-bottom:48px">
+        30日間のプログラム。<br>毎日2分だけ。<br>やがて、世界の見え方が変わる。
+      </div>
+      <div class="a4 label" style="margin-bottom:20px">あなたの名前は？</div>
+      <input class="ob-input a4" id="ob-name" type="text" placeholder="名前を入力" maxlength="20" value="${_ob.name}" autocomplete="off">
+      <div style="margin-top:36px" class="a5">
+        <button class="btn" onclick="obNext()">次へ</button>
+      </div>
+    </div>`;
+    setTimeout(()=>document.getElementById('ob-name')?.focus(),400);
+  } else if(_ob.step===1){
+    el.innerHTML=`
+    <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:0;padding-bottom:32px">
+      <div class="a1 label" style="margin-bottom:8px">何のために観るのですか</div>
+      <div class="a2 italic-muted" style="margin-bottom:32px">${_ob.name}さんの意図を選んでください</div>
+      <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px" class="a3">
+        ${INTENTS.map(it=>`
+        <div class="intent-opt${_ob.intent===it.id?' on':''}" onclick="obSelectIntent('${it.id}')">
+          <div class="io-label">${it.label}</div>
+          <div class="io-hint">${it.hint}</div>
+        </div>`).join('')}
+      </div>
+      <div style="display:flex;gap:16px;margin-top:32px" class="a4">
+        <button class="btn" style="max-width:120px;padding:12px 0;font-size:13px" onclick="obBack()">戻る</button>
+        <button class="btn" style="max-width:120px;padding:12px 0;font-size:13px" onclick="obNext()">次へ</button>
+      </div>
+    </div>`;
+  } else if(_ob.step===2){
+    el.innerHTML=`
+    <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:0;padding-bottom:32px">
+      <div class="a1 label" style="margin-bottom:8px">テーマカラーを選んでください</div>
+      <div class="a2 italic-muted" style="margin-bottom:8px">後から変えることができます</div>
+      <div class="a3 swatch-row">
+        ${Object.entries(THEMES).map(([key,t])=>`
+        <div class="swatch${_ob.accent===key?' on':''}" data-accent="${key}" style="background:${t.gold};color:#0C0B08" onclick="obSelectTheme('${key}')">${t.label}</div>`).join('')}
+      </div>
+      <div class="a4" style="font-size:72px;font-weight:200;color:var(--gold);line-height:1;margin:16px 0 32px">観</div>
+      <div style="display:flex;gap:16px" class="a5">
+        <button class="btn" style="max-width:120px;padding:12px 0;font-size:13px" onclick="obBack()">戻る</button>
+        <button class="btn" style="max-width:120px;padding:12px 0;font-size:13px" onclick="obNext()">はじめる</button>
+      </div>
+    </div>`;
+  }
+}
+
+function obNext(){
+  if(_ob.step===0){
+    const name=(document.getElementById('ob-name')||{}).value?.trim()||'';
+    if(!name) return;
+    _ob.name=name; _ob.step=1; rOnboard();
+  } else if(_ob.step===1){
+    if(!_ob.intent) return;
+    _ob.step=2; rOnboard();
+  } else {
+    const s=load();
+    s.profile={ name:_ob.name, intent:_ob.intent, accent:_ob.accent };
+    s.startDate=today(); s.entries={};
+    save(s); applyTheme(_ob.accent); rToday();
+  }
+}
+
+function obBack(){
+  if(_ob.step>0){ _ob.step--; rOnboard(); }
+}
+
+function obSelectIntent(id){
+  _ob.intent=id;
+  document.querySelectorAll('.intent-opt').forEach(t=>t.classList.toggle('on',t.getAttribute('onclick')===`obSelectIntent('${id}')`));
+}
+
+function obSelectTheme(accent){
+  _ob.accent=accent; applyTheme(accent);
+  document.querySelectorAll('.swatch').forEach(t=>t.classList.toggle('on',t.dataset.accent===accent));
+}
+
+// ═══════════════════════════════════
 // RENDER TODAY
 // ═══════════════════════════════════
 function rToday(){
-  const s=load(), t=today(), di=dayIdx(s), d=D[di%D.length];
+  const s=load();
+  if(!s.profile){ _ob={step:0,name:'',intent:'',accent:'gold'}; rOnboard(); return; }
+  applyTheme(s.profile.accent);
+  const t=today(), di=dayIdx(s), d=D[di%D.length];
   const entry=s.entries&&s.entries[t]||{};
   const el=document.getElementById('today');
-
-  // ── First launch ──
-  if(!s.startDate){
-    el.innerHTML=`
-    <div style="text-align:center;padding:20px 0 40px">
-      <div class="a1 breathe" style="font-size:104px;font-weight:200;color:var(--gold);line-height:1;margin-bottom:16px">観</div>
-      <div class="a2 label" style="margin-bottom:48px">KAN — DAILY PRACTICE</div>
-      <div class="a3" style="font-size:14px;font-weight:200;color:var(--muted);line-height:2.6;max-width:280px;margin:0 auto 48px">
-        30日間のプログラム。<br>
-        毎日2分だけ。<br>
-        やがて、世界の見え方が変わる。
-      </div>
-      <button class="btn a4" onclick="start()">はじめる</button>
-    </div>`;
-    return;
-  }
+  const name=s.profile.name||'';
+  const intent=INTENTS.find(x=>x.id===s.profile.intent)||INTENTS[0];
 
   // ── Evening done ──
   if(entry.evening_done){
@@ -587,7 +525,7 @@ function rToday(){
     <div style="text-align:center;padding:20px 0 40px">
       <div class="a1 breathe ck">${d.k}</div>
       <div class="a2 cm">
-        今日の観察、完了。<br>
+        ${name}、今日もよく観た。<br>
         ${entry.note?`<br>「${entry.note}」<br>`:''}
         <br>明日また、ここに来る。
       </div>
@@ -596,12 +534,12 @@ function rToday(){
     return;
   }
 
-  // ── Morning done → show evening form (FIX: 16時の時間制限を撤廃) ──
+  // ── Morning done → evening form ──
   if(entry.morning_done){
     el.innerHTML=`
     <div style="text-align:center;max-width:340px;padding:0 0 32px">
-      <div class="a1 label" style="margin-bottom:16px">夕の記録</div>
-      <div class="a2 italic-muted" style="margin-bottom:32px">今日の観察、どうだったか</div>
+      <div class="a1 label" style="margin-bottom:6px">夕の記録</div>
+      <div class="a2 italic-muted" style="margin-bottom:32px">今日の${name}の観察、どうだったか</div>
       <div class="card a2" style="text-align:left">
         <span class="cl">今日の問い</span>
         <div class="ct" style="font-size:13px;color:var(--muted)">${d.m}</div>
@@ -643,9 +581,11 @@ function rToday(){
   // ── Morning not done ──
   el.innerHTML=`
   <div style="text-align:center;padding:0 0 32px">
-    <div class="a1" style="margin-bottom:32px">${mandala(di,s.entries,s.startDate)}</div>
+    <div class="a1" style="margin-bottom:28px">${mandala(di,s.entries,s.startDate)}</div>
+    <div class="a2" style="font-size:13px;font-weight:200;color:var(--muted);margin-bottom:20px">${greeting(name)}</div>
     <div class="a2 phase">${d.p}</div>
-    <div class="a2 label" style="margin-bottom:20px">Day ${di+1} / 30</div>
+    <div class="a3 label" style="margin-bottom:6px">Day ${di+1} / 30</div>
+    <div class="a3 intent-badge">${intent.frame}</div>
     <div class="card a3" style="text-align:left">
       <span class="cl">今日、これを観る</span>
       <div class="ct">${d.m}</div>
@@ -665,30 +605,53 @@ function rCal(){
     el.innerHTML=`<div style="text-align:center;color:var(--stone);font-family:'EB Garamond',serif;font-size:13px;letter-spacing:2px">プログラム未開始</div>`;
     return;
   }
+  const name=s.profile?.name||'';
   const done=Object.values(s.entries||{}).filter(e=>e.evening_done).length;
+  const streak=calcStreak(Object.entries(s.entries||{}));
   let g='';
   for(let i=0;i<30;i++){
     const date=dateFor(i,s.startDate);
     const isDone=s.entries&&s.entries[date]&&s.entries[date].evening_done;
     const isT=i===di;
-    let c='cd';
-    if(isDone) c+=' done';
-    if(isT) c+=' today';
-    g+=`<div class="${c}">${i+1}</div>`;
+    g+=`<div class="cd${isDone?' done':''}${isT?' today':''}">${i+1}</div>`;
   }
   el.innerHTML=`
   <div style="text-align:center;width:100%;max-width:320px;">
-    <div class="a1 stats">
+    ${name?`<div class="a1 label" style="margin-bottom:24px">${name}の30日</div>`:'<div style="height:24px"></div>'}
+    <div class="a2 stats">
       <div class="stat"><div class="sn">${done}</div><div class="sl">完了日</div></div>
       <div class="stat"><div class="sn">${di+1}</div><div class="sl">経過日</div></div>
-      <div class="stat"><div class="sn">${30-di-1}</div><div class="sl">残り日</div></div>
+      <div class="stat"><div class="sn">${streak}</div><div class="sl">連続日</div></div>
     </div>
-    <div class="a2 cg">${g}</div>
-    <div class="a3 italic-muted" style="margin-top:8px">欠けた日も、波紋の一部である</div>
-    <div class="a4 data-row">
+    <div class="a3 cg">${g}</div>
+    <div class="a4 italic-muted" style="margin-top:8px">欠けた日も、波紋の一部である</div>
+    <div class="a5 data-row">
       <button class="data-btn" onclick="exportData()">エクスポート</button>
       <button class="data-btn" onclick="importData()">インポート</button>
       <button class="data-btn" id="reset-btn" onclick="resetProgram()">リセット</button>
+    </div>
+    <div style="margin-top:16px;text-align:center" class="a5">
+      <button class="expand-btn" onclick="toggleSettings()">⚙ 設定を変更する</button>
+    </div>
+    <div class="settings-panel" id="settings-panel">
+      <div class="settings-section">
+        <div class="label">名前</div>
+        <input class="settings-input" id="s-name" value="${s.profile?.name||''}" maxlength="20">
+        <div class="label" style="margin-top:8px">意図</div>
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px">
+          ${INTENTS.map(it=>`
+          <div class="intent-opt${s.profile?.intent===it.id?' on':''}" onclick="settingsSelectIntent('${it.id}')">
+            <div class="io-label">${it.label}</div>
+            <div class="io-hint">${it.hint}</div>
+          </div>`).join('')}
+        </div>
+        <div class="label" style="margin-top:8px">テーマ</div>
+        <div class="swatch-row" style="margin:12px 0">
+          ${Object.entries(THEMES).map(([key,t])=>`
+          <div class="swatch${s.profile?.accent===key?' on':''}" data-skey="${key}" style="background:${t.gold};color:#0C0B08" onclick="settingsSelectTheme('${key}')">${t.label}</div>`).join('')}
+        </div>
+        <button class="btn" style="margin-top:8px" onclick="saveSettings()">保存する</button>
+      </div>
     </div>
   </div>`;
 }
@@ -697,15 +660,12 @@ function rCal(){
 // RENDER INSIGHT
 // ═══════════════════════════════════
 function waveChart(allEntries,s){
-  const W=300,H=100,pad=20;
-  const pts=[];
+  const W=300,H=100,pad=20, pts=[];
   for(let i=0;i<30;i++){
     const date=dateFor(i,s.startDate);
     const e=s.entries&&s.entries[date];
     if(e&&e.evening_done&&e.reaction){
-      const x=pad+i*(W-2*pad)/29;
-      const y=H-pad-(e.reaction-1)*(H-2*pad)/4;
-      pts.push({x,y,r:e.reaction});
+      pts.push({x:pad+i*(W-2*pad)/29, y:H-pad-(e.reaction-1)*(H-2*pad)/4});
     }
   }
   if(pts.length<2) return '';
@@ -721,22 +681,18 @@ function waveChart(allEntries,s){
     yLabels+=`<text x="${pad-8}" y="${y2+3}" text-anchor="end" font-family="'EB Garamond',serif" font-size="9" fill="#524F44">${v}</text>`;
     yLabels+=`<line x1="${pad}" y1="${y2}" x2="${W-pad}" y2="${y2}" stroke="#201E18" stroke-width="0.5"/>`;
   }
-  const dots2=pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3" fill="#C4A06A"/>`).join('');
   return `<div class="wave-wrap"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
     <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C4A06A" stop-opacity="0.2"/><stop offset="100%" stop-color="#C4A06A" stop-opacity="0"/></linearGradient></defs>
     ${yLabels}
     <path d="${areaPath}" fill="url(#wg)"/>
     <path d="${path}" fill="none" stroke="#C4A06A" stroke-width="1.5"/>
-    ${dots2}
+    ${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3" fill="#C4A06A"/>`).join('')}
   </svg></div>`;
 }
 
 function ringChart(entries){
   const counts={greed:0,anger:0,delusion:0,none:0};
-  entries.forEach(([,v])=>{
-    if(v.poison&&counts.hasOwnProperty(v.poison)) counts[v.poison]++;
-    else counts.none++;
-  });
+  entries.forEach(([,v])=>{ if(v.poison&&counts.hasOwnProperty(v.poison)) counts[v.poison]++; else counts.none++; });
   const total=entries.length||1;
   const colors={greed:'#C4A06A',anger:'#8A6040',delusion:'#524F44',none:'#201E18'};
   const labels={greed:'貪',anger:'瞋',delusion:'癡',none:'空'};
@@ -744,36 +700,29 @@ function ringChart(entries){
   let arcs='',angle=-Math.PI/2;
   const sorted=Object.entries(counts).filter(([,c])=>c>0).sort((a,b)=>b[1]-a[1]);
   if(!sorted.length) return '';
-  const dominant=sorted[0];
   sorted.forEach(([key,count])=>{
-    const sweep=(count/total)*2*Math.PI;
-    if(sweep<0.01) return;
+    const sweep=(count/total)*2*Math.PI; if(sweep<0.01) return;
     const x1=cx+R*Math.cos(angle),y1=cy+R*Math.sin(angle);
     const x2=cx+R*Math.cos(angle+sweep),y2=cy+R*Math.sin(angle+sweep);
     const ix1=cx+r2*Math.cos(angle+sweep),iy1=cy+r2*Math.sin(angle+sweep);
     const ix2=cx+r2*Math.cos(angle),iy2=cy+r2*Math.sin(angle);
-    const large=sweep>Math.PI?1:0;
-    arcs+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${R},${R} 0 ${large} 1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix1.toFixed(1)},${iy1.toFixed(1)} A${r2},${r2} 0 ${large} 0 ${ix2.toFixed(1)},${iy2.toFixed(1)} Z" fill="${colors[key]}" opacity="0.85"/>`;
+    arcs+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${R},${R} 0 ${sweep>Math.PI?1:0} 1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix1.toFixed(1)},${iy1.toFixed(1)} A${r2},${r2} 0 ${sweep>Math.PI?1:0} 0 ${ix2.toFixed(1)},${iy2.toFixed(1)} Z" fill="${colors[key]}" opacity="0.85"/>`;
     angle+=sweep;
   });
   return `<div class="ring-wrap"><svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
     ${arcs}
-    <text x="80" y="88" text-anchor="middle" font-family="'Noto Serif JP',serif" font-weight="200" font-size="28" fill="${colors[dominant[0]]}">${labels[dominant[0]]}</text>
+    <text x="80" y="88" text-anchor="middle" font-family="'Noto Serif JP',serif" font-weight="200" font-size="28" fill="${colors[sorted[0][0]]}">${labels[sorted[0][0]]}</text>
   </svg></div>`;
 }
 
 function barChart(entries){
   const counts={};
   DISTORTIONS.forEach(d3=>counts[d3.id]=0);
-  entries.forEach(([,v])=>{
-    if(v.distortions) v.distortions.forEach(id=>{if(counts.hasOwnProperty(id))counts[id]++;});
-  });
+  entries.forEach(([,v])=>{ if(v.distortions) v.distortions.forEach(id=>{if(counts.hasOwnProperty(id))counts[id]++;}); });
   const mx=Math.max(...Object.values(counts),1);
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  return sorted.map(([id,count])=>{
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([id,count])=>{
     const dd=DISTORTIONS.find(x=>x.id===id);
-    const pct=Math.round(count/mx*100);
-    return `<div class="bar-row"><div class="bar-label">${dd?dd.label:id}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><div class="bar-count">${count}</div></div>`;
+    return `<div class="bar-row"><div class="bar-label">${dd?dd.label:id}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(count/mx*100)}%"></div></div><div class="bar-count">${count}</div></div>`;
   }).join('');
 }
 
@@ -791,35 +740,36 @@ function rInsight(){
   const avg=(entries.reduce((a,[,v])=>a+(v.reaction||0),0)/entries.length).toFixed(1);
   const notes=entries.filter(([,v])=>v.note).slice(-4);
   const di=dayIdx(s), d=D[di%D.length];
+  const personal=adaptiveInsight(entries, s.profile);
+  const name=s.profile?.name||'';
 
   _noteExport=`## 今週のSNS心理学解剖\n\n今週は${entries.length}件の観察を記録した。\n\n現在のテーマは「**${d.p}**」。${d.c}を軸に、日常とSNSの中に現れる認知の動きを観察している。\n${notes.length?'\n---\n\n記録した気づき：\n'+notes.map(([,v])=>`- 「${v.note}」`).join('\n')+'\n\n---\n\n':''}観察を続けると、感情の動きに一瞬の間が生まれる。その間に、選択がある。\n\n#SNS心理学 #認知バイアス #観察日記 #原始仏教`;
 
   const wave=waveChart(entries,s);
   const ring=ringChart(entries);
   const hasDistortions=entries.some(([,v])=>v.distortions&&v.distortions.length);
-  const hasPoisonData=entries.some(([,v])=>v.poison);
   const bars=hasDistortions?barChart(entries):'';
 
   el.innerHTML=`
   <div style="text-align:center;max-width:320px;padding-bottom:40px">
     <div class="a1 label" style="margin-bottom:8px">洞察</div>
-    <div class="a2 italic-muted" style="margin-bottom:32px">${d.p} の段階</div>
-    <div class="iblock a2">
+    <div class="a2 italic-muted" style="margin-bottom:32px">${name?`${name}の `:''} ${d.p} の段階</div>
+    ${personal?`
+    <div class="insight-personal a2">
+      ${personal.split('\n').map(p=>`<p>${p}</p>`).join('')}
+    </div>`:''}
+    <div class="iblock a3">
       <div class="il">平均反応強度</div>
       <div class="iv">${avg}<span style="font-size:18px;color:var(--stone)"> / 5</span></div>
     </div>
-    ${wave?`<div class="a2"><div class="label" style="margin-bottom:12px">反応の波</div>${wave}</div>`:''}
-    ${hasPoisonData?`<div class="sep"></div><div class="a3"><div class="label" style="margin-bottom:16px">三毒の分布</div>${ring}</div>`:''}
-    ${hasDistortions?`<div class="sep"></div><div class="a3" style="display:flex;flex-direction:column;align-items:center"><div class="label" style="margin-bottom:16px">認知の歪み</div>${bars}</div>`:''}
+    ${wave?`<div class="a3"><div class="label" style="margin-bottom:12px">反応の波</div>${wave}</div>`:''}
+    ${entries.some(([,v])=>v.poison)?`<div class="sep"></div><div class="a4"><div class="label" style="margin-bottom:16px">三毒の分布</div>${ring}</div>`:''}
+    ${hasDistortions?`<div class="sep"></div><div class="a4" style="display:flex;flex-direction:column;align-items:center"><div class="label" style="margin-bottom:16px">認知の歪み</div>${bars}</div>`:''}
     ${notes.length?`
     <div class="sep"></div>
     <div style="width:100%;max-width:320px;margin-bottom:24px">
-      <div class="a4 label" style="margin-bottom:16px;text-align:center">最近の気づき</div>
-      ${notes.map(([date,v])=>`
-      <div class="ne a4">
-        <div class="nt">「${v.note}」</div>
-        <div class="nd">${date}</div>
-      </div>`).join('')}
+      <div class="a5 label" style="margin-bottom:16px;text-align:center">最近の気づき</div>
+      ${notes.map(([date,v])=>`<div class="ne a5"><div class="nt">「${v.note}」</div><div class="nd">${date}</div></div>`).join('')}
     </div>`:''}
     <button class="btn a5" onclick="copyNote()" style="font-size:13px;padding:14px">note下書きをコピー</button>
     <div id="cc"></div>
@@ -829,14 +779,6 @@ function rInsight(){
 // ═══════════════════════════════════
 // ACTIONS
 // ═══════════════════════════════════
-function start(){
-  const s=load();
-  s.startDate=today();
-  s.entries={};
-  save(s);
-  rToday();
-}
-
 function accept(){
   const s=load(), t=today();
   if(!s.entries) s.entries={};
@@ -856,24 +798,19 @@ function toggleDeep(){
 
 function setPoison(id){
   _poison=(_poison===id)?null:id;
-  const tags=document.querySelectorAll('#poison-tags .tag');
-  tags.forEach((t,i)=>t.classList.toggle('on',POISONS[i].id===id&&_poison===id));
+  document.querySelectorAll('#poison-tags .tag').forEach((t,i)=>t.classList.toggle('on',POISONS[i].id===id&&_poison===id));
 }
 
-// FIX: 2つ上限に達したときヒントを表示
 function toggleDist(id){
   const idx=_distortions.indexOf(id);
-  if(idx>=0){
-    _distortions.splice(idx,1);
-  } else if(_distortions.length<2){
-    _distortions.push(id);
-  } else {
+  if(idx>=0){ _distortions.splice(idx,1); }
+  else if(_distortions.length<2){ _distortions.push(id); }
+  else{
     const hint=document.getElementById('dist-hint');
     if(hint){ hint.style.opacity='1'; setTimeout(()=>hint.style.opacity='0',1800); }
     return;
   }
-  const tags=document.querySelectorAll('#dist-tags .tag');
-  tags.forEach((t,i)=>t.classList.toggle('on',_distortions.includes(DISTORTIONS[i].id)));
+  document.querySelectorAll('#dist-tags .tag').forEach((t,i)=>t.classList.toggle('on',_distortions.includes(DISTORTIONS[i].id)));
 }
 
 function submitE(){
@@ -881,101 +818,83 @@ function submitE(){
   const note=(document.getElementById('ta')||{}).value||'';
   const reframe=(document.getElementById('reframe-ta')||{}).value||'';
   if(!s.entries) s.entries={};
-  s.entries[t]={
-    ...s.entries[t]||{},
-    evening_done:true, reaction:_reaction, note:note.trim(), ts:Date.now(),
-    poison:_poison||null,
-    distortions:_distortions.length?[..._distortions]:[],
-    reframe:reframe.trim()||null
-  };
+  s.entries[t]={ ...s.entries[t]||{}, evening_done:true, reaction:_reaction, note:note.trim(), ts:Date.now(), poison:_poison||null, distortions:_distortions.length?[..._distortions]:[], reframe:reframe.trim()||null };
   save(s); rToday();
 }
 
-// FIX: クリップボード失敗時のフォールバック
 function copyNote(){
   if(!_noteExport) return;
-  const showMsg=(text)=>{
-    const el=document.getElementById('cc');
-    if(el){el.textContent=text;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',2400);}
-  };
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(_noteExport)
-      .then(()=>showMsg('コピーしました'))
-      .catch(()=>{ showMsg('コピー失敗'); prompt('手動でコピーしてください:',_noteExport); });
-  } else {
-    showMsg('コピー失敗');
-    prompt('手動でコピーしてください:',_noteExport);
-  }
+  const showMsg=text=>{ const el=document.getElementById('cc'); if(el){el.textContent=text;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',2400);} };
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(_noteExport).then(()=>showMsg('コピーしました')).catch(()=>{ showMsg('コピー失敗'); prompt('手動でコピーしてください:',_noteExport); });
+  } else { showMsg('コピー失敗'); prompt('手動でコピーしてください:',_noteExport); }
 }
 
-// ── データエクスポート（JSONダウンロード）
 function exportData(){
-  const s=load();
-  const blob=new Blob([JSON.stringify(s,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
+  const blob=new Blob([JSON.stringify(load(),null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
   a.href=url; a.download='kan_backup_'+today()+'.json';
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a); URL.revokeObjectURL(url);
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 
-// ── データインポート（JSONファイルから復元）
 function importData(){
   const input=document.createElement('input');
   input.type='file'; input.accept='.json';
   input.onchange=e=>{
-    const file=e.target.files[0];
-    if(!file) return;
+    const file=e.target.files[0]; if(!file) return;
     const reader=new FileReader();
     reader.onload=ev=>{
       try{
         const data=JSON.parse(ev.target.result);
-        if(!data.startDate||typeof data.startDate!=='string') throw new Error('invalid');
-        save(data);
-        go('today');
-      }catch{
-        const el=document.getElementById('cal');
-        if(el){
-          const msg=document.createElement('div');
-          msg.style.cssText='color:#c44a4a;font-size:12px;margin-top:12px;font-family:EB Garamond,serif;letter-spacing:1px';
-          msg.textContent='ファイルが正しくありません';
-          el.querySelector('.data-row').after(msg);
-          setTimeout(()=>msg.remove(),3000);
-        }
-      }
+        if(!data.startDate||typeof data.startDate!=='string') throw new Error();
+        save(data); if(data.profile?.accent) applyTheme(data.profile.accent); go('today');
+      }catch{ alert('ファイルが正しくありません'); }
     };
     reader.readAsText(file);
   };
-  document.body.appendChild(input);
-  input.click();
-  document.body.removeChild(input);
+  document.body.appendChild(input); input.click(); document.body.removeChild(input);
 }
 
-// ── リセット（2タップ確認）
 function resetProgram(){
-  const btn=document.getElementById('reset-btn');
-  if(!btn) return;
+  const btn=document.getElementById('reset-btn'); if(!btn) return;
   if(btn.dataset.confirm!=='1'){
-    btn.textContent='本当に削除する';
-    btn.dataset.confirm='1';
-    btn.style.color='#c44a4a';
-    setTimeout(()=>{
-      if(btn.dataset.confirm==='1'){
-        btn.textContent='リセット';
-        btn.dataset.confirm='0';
-        btn.style.color='';
-      }
-    },3000);
+    btn.textContent='本当に削除する'; btn.dataset.confirm='1'; btn.style.color='#c44a4a';
+    setTimeout(()=>{ if(btn.dataset.confirm==='1'){ btn.textContent='リセット'; btn.dataset.confirm='0'; btn.style.color=''; } },3000);
     return;
   }
-  localStorage.removeItem(SK);
-  go('today');
+  localStorage.removeItem(SK); go('today');
+}
+
+// ── Settings ──
+function toggleSettings(){
+  document.getElementById('settings-panel')?.classList.toggle('open');
+}
+
+let _sIntent='';
+function settingsSelectIntent(id){
+  _sIntent=id;
+  document.querySelectorAll('#settings-panel .intent-opt').forEach(t=>t.classList.toggle('on',t.getAttribute('onclick')===`settingsSelectIntent('${id}')`));
+}
+
+function settingsSelectTheme(key){
+  applyTheme(key);
+  document.querySelectorAll('#settings-panel .swatch').forEach(t=>t.classList.toggle('on',t.dataset.skey===key));
+  _sTheme=key;
+}
+let _sTheme='';
+
+function saveSettings(){
+  const s=load();
+  const name=(document.getElementById('s-name')||{}).value?.trim()||s.profile?.name||'';
+  const intent=_sIntent||s.profile?.intent||'sns';
+  const accent=_sTheme||s.profile?.accent||'gold';
+  s.profile={ ...s.profile||{}, name, intent, accent };
+  save(s); applyTheme(accent); rCal();
 }
 
 // ═══════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════
-// FIX: 各スクリーン内のナビボタンを正しく更新
 function go(name){
   const tabs=['today','cal','insight'];
   tabs.forEach(n=>{
@@ -988,6 +907,7 @@ function go(name){
 }
 
 // ── INIT ──
+(()=>{ const s=load(); if(s.profile?.accent) applyTheme(s.profile.accent); })();
 rToday();
 </script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js");}</script>
