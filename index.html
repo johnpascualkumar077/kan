@@ -211,6 +211,32 @@ body {
   font-size:16px; padding:8px 0; width:100%; max-width:200px; outline:none; text-align:center;
 }
 
+/* ── SEALS (印可) ── */
+.seals-section { width:100%; max-width:320px; margin-top:28px; }
+.seals-title { font-family:'EB Garamond',serif; font-size:11px; letter-spacing:3px; color:var(--stone); text-align:center; text-transform:uppercase; margin-bottom:16px; }
+.seals-grid { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+.seal {
+  width:58px; height:58px; border-radius:50%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:all .3s; position:relative;
+}
+.seal.earned { border:1.5px solid var(--gold); background:var(--glow); }
+.seal.locked  { border:1.5px solid var(--border); background:transparent; opacity:0.35; }
+.seal .sk { font-family:'Noto Serif JP',serif; font-size:20px; font-weight:300; line-height:1; color:var(--gold); }
+.seal.locked .sk { color:var(--border); }
+.seal .sl { font-family:'Noto Serif JP',serif; font-size:9px; font-weight:200; margin-top:2px; letter-spacing:1px; color:var(--stone); }
+.seal.locked .sl { color:var(--border); }
+/* Seal toast */
+#seal-toast {
+  position:fixed; bottom:88px; left:50%; transform:translateX(-50%) translateY(16px);
+  background:var(--surface); border:1px solid var(--gold); color:var(--text);
+  font-family:'Noto Serif JP',serif; font-size:12px; font-weight:300;
+  padding:10px 22px; border-radius:2px; opacity:0; pointer-events:none;
+  transition:opacity .4s ease, transform .4s ease; z-index:9999;
+  white-space:nowrap; letter-spacing:1px; text-align:center;
+}
+#seal-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
 /* ── AUTH ── */
 .auth-input {
   background:transparent; border:none; border-bottom:1px solid var(--border);
@@ -261,6 +287,8 @@ body {
     <button class="nb on" onclick="go('insight')">識<span>Insight</span></button>
   </nav>
 </div>
+
+<div id="seal-toast"></div>
 
 <script>
 // ═══════════════════════════════════
@@ -350,7 +378,19 @@ const SK='kan_v1';
 const loadLocal=()=>{ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch{ return{}; } };
 const saveLocal=s=>localStorage.setItem(SK,JSON.stringify(s));
 const load=loadLocal;
-function save(s){ saveLocal(s); syncToCloud(s); }
+function showSealToast(seal){
+  const el=document.getElementById('seal-toast');
+  if(!el) return;
+  el.textContent=`印可 ｜ ${seal.k}「${seal.label}」— ${seal.desc}`;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3800);
+}
+function save(s){
+  const old=loadLocal();
+  const hadEarned=new Set(SEALS.filter(seal=>{ try{ return seal.check(old); }catch{ return false; } }).map(seal=>seal.id));
+  saveLocal(s); syncToCloud(s);
+  SEALS.forEach(seal=>{ try{ if(!hadEarned.has(seal.id)&&seal.check(s)) setTimeout(()=>showSealToast(seal),600); }catch(_){} });
+}
 const today=()=>new Date().toISOString().split('T')[0];
 const dateFor=(i,start)=>{ if(!start) return ''; const d=new Date(start); d.setDate(d.getDate()+i); return d.toISOString().split('T')[0]; };
 const dayIdx=(s)=>{ if(!s.startDate) return 0; const diff=Math.floor((new Date(today())-new Date(s.startDate))/86400000); return Math.min(diff,D.length-1); };
@@ -367,6 +407,25 @@ const DISTORTIONS=[
   {id:'mind_read',label:'読心術'},
   {id:'catastrophe',label:'破局化'},
 ];
+
+// ═══════════════════════════════════
+// SEALS (印可)
+// ═══════════════════════════════════
+const SEALS=[
+  { id:'first',    k:'初', label:'初観',   desc:'はじめての観察',        check:s=>Object.values(s.entries||{}).some(e=>e.evening_done) },
+  { id:'days10',   k:'十', label:'十日',   desc:'10日間完了',            check:s=>Object.values(s.entries||{}).filter(e=>e.evening_done).length>=10 },
+  { id:'streak3',  k:'三', label:'三帰依', desc:'3日連続の実践',         check:s=>calcStreak(Object.entries(s.entries||{}))>=3 },
+  { id:'streak7',  k:'七', label:'七覚支', desc:'7日連続の実践',         check:s=>calcStreak(Object.entries(s.entries||{}))>=7 },
+  { id:'streak21', k:'不', label:'不退転', desc:'21日連続の実践',        check:s=>calcStreak(Object.entries(s.entries||{}))>=21 },
+  { id:'complete', k:'脱', label:'解脱',   desc:'30日を完走した',        check:s=>Object.values(s.entries||{}).filter(e=>e.evening_done).length>=30 },
+  { id:'toxins',   k:'毒', label:'三毒観', desc:'三毒すべてを観察した',  check:s=>{ const ps=new Set(Object.values(s.entries||{}).map(e=>e.poison)); return ['greed','anger','delusion'].every(p=>ps.has(p)); } },
+  { id:'depth',    k:'深', label:'深観',   desc:'気づきを言葉にした',    check:s=>Object.values(s.entries||{}).some(e=>e.note&&e.note.trim().length>0) },
+  { id:'calm',     k:'静', label:'静心',   desc:'低い反応を3回記録',     check:s=>Object.values(s.entries||{}).filter(e=>e.evening_done&&e.reaction<=2).length>=3 },
+];
+
+function calcSeals(s){
+  return SEALS.map(seal=>({ ...seal, earned:seal.check(s) }));
+}
 
 let _reaction=0, _noteExport='', _poison=null, _distortions=[];
 
@@ -702,6 +761,16 @@ function rCal(){
     </div>
     <div class="a3 cg">${g}</div>
     <div class="a4 italic-muted" style="margin-top:8px">欠けた日も、波紋の一部である</div>
+    <div class="a4 seals-section">
+      <div class="seals-title">印可</div>
+      <div class="seals-grid">
+        ${calcSeals(s).map(seal=>`
+        <div class="seal ${seal.earned?'earned':'locked'}" title="${seal.desc}">
+          <span class="sk">${seal.k}</span>
+          <span class="sl">${seal.label}</span>
+        </div>`).join('')}
+      </div>
+    </div>
     <div class="a5 data-row">
       <button class="data-btn" onclick="exportData()">エクスポート</button>
       <button class="data-btn" onclick="importData()">インポート</button>
